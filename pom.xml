@@ -25,8 +25,7 @@
             <connection>scm:git:git@github.com:s-case/requirements-editor.git</connection>
             <developerConnection>scm:git:git@github.com:s-case/requirements-editor.git</developerConnection>
             <url>https://github.com/s-case/requirements-editor.git</url>
-          <tag>HEAD</tag>
-  </scm>
+        </scm>
 
 	<repositories>
 		<repository>
@@ -35,13 +34,13 @@
 			<url>http://download.eclipse.org/releases/luna/</url>
 		</repository>
                 <repository>
-                <id>OSSRH snapshots</id>
-                <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                <snapshots>
-                    <enabled>true</enabled>
-                    <updatePolicy>always</updatePolicy>
-                </snapshots>
-            </repository>
+                    <id>OSSRH snapshots</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
 	</repositories>
 
 	<dependencies>
