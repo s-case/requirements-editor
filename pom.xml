@@ -4,7 +4,7 @@
         <groupId>eu.scasefp7</groupId>
 	<artifactId>requirements-editor</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 
         <parent>
             <groupId>eu.scasefp7</groupId>
@@ -25,7 +25,8 @@
             <connection>scm:git:git@github.com:s-case/requirements-editor.git</connection>
             <developerConnection>scm:git:git@github.com:s-case/requirements-editor.git</developerConnection>
             <url>https://github.com/s-case/requirements-editor.git</url>
-        </scm>
+          <tag>requirements-editor-1.0.1</tag>
+  </scm>
 
 	<repositories>
 		<repository>
