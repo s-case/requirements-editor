@@ -48,7 +48,7 @@
 		<dependency>
                         <groupId>eu.scasefp7</groupId>
 			<artifactId>s-case-core</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.0.1</version>
 		</dependency>
 	</dependencies>
 
