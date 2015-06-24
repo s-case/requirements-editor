@@ -1,34 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.scasefp7.eclipse</groupId>
 	<artifactId>requirements-editor</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
-	<parent>
-		<groupId>eu.scasefp7</groupId>
-		<artifactId>scase-parent</artifactId>
-		<version>1.0.18-SNAPSHOT</version>
-	</parent>
-
-
-	<developers>
-		<developer>
-			<name>Themistoklis Diamantopoulos</name>
-			<email>thdiaman@issel.ee.auth.gr</email>
-			<organization>Aristotle University of Thessaloniki</organization>
-			<organizationUrl>http://www.auth.gr/en</organizationUrl>
-		</developer>
-	</developers>
-
-	<scm>
-		<connection>scm:git:git@github.com:s-case/requirements-editor.git</connection>
-		<developerConnection>scm:git:git@github.com:s-case/requirements-editor.git</developerConnection>
-		<url>https://github.com/s-case/requirements-editor.git</url>
-		<tag>HEAD</tag>
-	</scm>
 
 	<modules>
 		<module>eu.scasefp7.eclipse.reqeditor</module>
@@ -36,10 +13,11 @@
 		<module>eu.scasefp7.eclipse.reqeditor.update-site</module>
 	</modules>
 
-	<properties>
-		<tycho.version>0.23.0</tycho.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	<parent>
+		<groupId>eu.scasefp7</groupId>
+		<artifactId>scase-parent</artifactId>
+		<version>1.0.18</version>
+	</parent>
 
 	<repositories>
 		<repository>
@@ -64,6 +42,45 @@
 			</releases>
 		</repository>
 	</repositories>
+
+	<developers>
+		<developer>
+			<name>Themistoklis Diamantopoulos</name>
+			<email>thdiaman@issel.ee.auth.gr</email>
+			<organization>Aristotle University of Thessaloniki</organization>
+			<organizationUrl>http://www.auth.gr/en</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:s-case/requirements-editor.git</connection>
+		<developerConnection>scm:git:git@github.com:s-case/requirements-editor.git</developerConnection>
+		<url>https://github.com/s-case/requirements-editor.git</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<properties>
+		<tycho.version>0.23.0</tycho.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>eu.scasefp7</groupId>
+			<artifactId>s-case-core</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<version>2.13.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+			<version>2.13.0</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -108,7 +125,73 @@
 					</environments>
 				</configuration>
 			</plugin>
-		</plugins>
-	</build>
-</project>
 
+			<plugin>
+				<!-- Copy non-Ecipse plugins to target/dependency so that may be referenced 
+					for runtime use. -->
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>classpath</id>
+						<goals>
+							<goal>build-classpath</goal>
+						</goals>
+						<configuration>
+							<fileSeparator>/</fileSeparator>
+							<prefix>target/dependency</prefix>
+							<outputFile>${project.build.directory}/classPath.txt</outputFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.1,)
+										</versionRange>
+										<goals>
+											<goal>
+												copy-dependencies
+											</goal>
+											<goal>build-classpath</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>

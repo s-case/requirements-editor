@@ -1,14 +1,8 @@
 package eu.scasefp7.eclipse.reqeditor.handlers;
 
-/**TODO: ONTOLOGY CODE - Uncomment this when dependencies to s-case-code are resolved
 import java.util.ArrayList;
 import java.util.HashMap;
-*/
 import java.util.List;
-
-/**TODO: ONTOLOGY CODE - Uncomment this when dependencies to s-case-code are resolved
-import ontology.StaticOntologyAPI;
-*/
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -20,9 +14,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-/**TODO: ONTOLOGY CODE - Uncomment this when dependencies to s-case-code are resolved
+import eu.scasefp7.core.ontology.StaticOntologyAPI;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
-*/
 
 /**
  * A command handler for exporting all the annotated instances to the static ontology.
@@ -53,7 +46,6 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					}
 				}
 				if (file != null) {
-					/**TODO: ONTOLOGY CODE - Uncomment this when dependencies to s-case-code are resolved
 					// Read the annotations and add them to the ontology
 					ArrayList<String> requirements = RQSHelpers.getRequirements(file);
 					ArrayList<String> annotations = RQSHelpers.getAnnotations(file);
@@ -109,7 +101,6 @@ public class ExportToOntologyHandler extends AbstractHandler {
 
 					// Close and save the ontology
 					ontology.close();
-*/
 				}
 			}
 		}
