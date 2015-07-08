@@ -12,33 +12,4 @@
 	<artifactId>eu.scasefp7.eclipse.reqeditor</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>eu.scasefp7</groupId>
-                                    <artifactId>s-case-core</artifactId>
-                                    <version>1.0.2-SNAPSHOT</version>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-    </build>
-
 </project>
