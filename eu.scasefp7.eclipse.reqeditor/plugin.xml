@@ -140,7 +140,17 @@
    </extension>
 
    <extension point="org.eclipse.ui.handlers">
-      <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ExportToOntologyHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology"/>
+      <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ExportToOntologyHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology">
+      	<enabledWhen>
+   			<with variable="selection">
+    			<iterate ifEmpty="false">
+     				<adapt type="org.eclipse.core.resources.IResource">
+         				<test property="org.eclipse.core.resources.name" value="*.rqs" />
+        			</adapt>
+    			</iterate>
+           </with>
+      	</enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
