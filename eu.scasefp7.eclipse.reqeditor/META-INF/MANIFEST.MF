@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  eu.scasefp7.eclipse.core;bundle-version="[1.0.2,2.0.0)"
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.scasefp7.eclipse.reqeditor,
  eu.scasefp7.eclipse.reqeditor.editors,

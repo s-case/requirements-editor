@@ -51,7 +51,7 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					ArrayList<String> annotations = RQSHelpers.getAnnotations(file);
 
 					// Instantiate the static ontology
-					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject().getName());
+					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject());
 
 					for (int i = 1; i < requirements.size() + 1; i++) {
 						// Add a new requirement
