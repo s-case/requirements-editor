@@ -28,8 +28,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>eu.scasefp7</groupId>
-                                    <artifactId>s-case-core</artifactId>
+                                    <groupId>eu.scasefp7.eclipse</groupId>
+                                    <artifactId>eu.scasefp7.eclipse.core</artifactId>
                                     <version>1.0.2-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>

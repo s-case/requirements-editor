@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import eu.scasefp7.core.ontology.StaticOntologyAPI;
+import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
 
 /**
