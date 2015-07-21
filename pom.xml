@@ -42,9 +42,9 @@
 			</releases>
 		</repository>
 		<repository>
-			<id>s-case</id>
+			<id>s-case-dev</id>
 			<layout>p2</layout>
-			<url>http://s-case.github.io/s-case_update_site/</url>
+			<url>http://s-case.github.io/s-case_dev_site/</url>
 		</repository>
 	</repositories>
 
