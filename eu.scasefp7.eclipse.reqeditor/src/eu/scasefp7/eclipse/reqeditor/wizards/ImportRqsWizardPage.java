@@ -87,7 +87,7 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 					ArrayList<String> datalines = new ArrayList<String>();
 					BufferedReader brlocal;
 					try {
-						brlocal = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+						brlocal = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 						String line;
 						while ((line = brlocal.readLine()) != null) {
 							datalines.add(line);

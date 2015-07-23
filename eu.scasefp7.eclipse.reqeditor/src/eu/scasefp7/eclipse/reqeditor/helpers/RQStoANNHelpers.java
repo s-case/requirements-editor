@@ -168,7 +168,7 @@ public class RQStoANNHelpers {
 	 */
 	public static void main(String[] args) {
 		try {
-			Scanner scanner = new Scanner(new File(args[0]));
+			Scanner scanner = new Scanner(new File(args[0]), "UTF-8");
 			String RQS = "";
 			while (scanner.hasNextLine()) {
 				RQS += scanner.nextLine() + "\n";
@@ -182,14 +182,14 @@ public class RQStoANNHelpers {
 		}
 
 		try {
-			Scanner txtScanner = new Scanner(new File(args[1]));
+			Scanner txtScanner = new Scanner(new File(args[1]), "UTF-8");
 			String TXT = "";
 			while (txtScanner.hasNextLine()) {
 				TXT += txtScanner.nextLine() + "\n";
 			}
 			txtScanner.close();
 
-			Scanner annScanner = new Scanner(new File(args[2]));
+			Scanner annScanner = new Scanner(new File(args[2]), "UTF-8");
 			String ANN = "";
 			while (annScanner.hasNextLine()) {
 				ANN += annScanner.nextLine() + "\n";

@@ -107,7 +107,7 @@ public class CreateRqsWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = new ByteArrayInputStream("".getBytes());
+			InputStream stream = new ByteArrayInputStream("".getBytes("UTF-8"));
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {

@@ -34,11 +34,11 @@ public class ButtonArea extends Composite {
 	/**
 	 * The images of the buttons.
 	 */
-	protected static HashMap<String, Image> images;
+	protected static final HashMap<String, Image> images;
 	static {
+		// Load the images of the buttons from the plugin
+		images = new HashMap<String, Image>();
 		try {
-			// Load the images of the buttons from the plugin
-			images = new HashMap<String, Image>();
 			List<String> imageNames = Arrays.asList("Add", "Cancel", "Confirm", "Delete", "Move down", "Modify",
 					"Move up");
 			for (String imageName : imageNames) {
