@@ -104,7 +104,7 @@
       <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ClearAllAnnotationsHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotations"/>
    </extension>
    <extension point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
             <command commandId="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotations" id="eu.scasefp7.eclipse.reqeditor.menus.clearAnnotations" icon="icons/sample.gif">
                   <visibleWhen>
 				           <with variable="activeMenuSelection">
@@ -124,7 +124,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
             <command commandId="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotate" id="eu.scasefp7.eclipse.reqeditor.menus.autoAnnotate" icon="icons/sample.gif">
                   <visibleWhen>
 				           <with variable="activeMenuSelection">
@@ -154,7 +154,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
             <command commandId="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology" id="eu.scasefp7.eclipse.reqeditor.menus.exportToOntology" icon="icons/sample.gif">
                   <visibleWhen>
 				           <with variable="activeMenuSelection">
