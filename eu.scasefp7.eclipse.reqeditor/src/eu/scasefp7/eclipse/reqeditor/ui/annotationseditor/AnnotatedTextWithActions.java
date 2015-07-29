@@ -169,27 +169,25 @@ public class AnnotatedTextWithActions extends AnnotatedText {
 				// Add a delete menu item
 				MenuItem deleteItem = new MenuItem(menu, SWT.NONE);
 				deleteItem.setText("Delete");
-				// Enable the delete item only if the annotation is not connected to anything
-				boolean hasRAnnotations = false;
+				// Find the R-type annotations that are connected to this annotation
+				ArrayList<RAnnotation> annotationRAnnotations = new ArrayList<RAnnotation>();
 				for (RAnnotation rAnnotation : requirementRAnnotations) {
 					if (rAnnotation.isConnectedToAnnotationId(annotation.Id)) {
-						hasRAnnotations = true;
-						break;
+						annotationRAnnotations.add(rAnnotation);
 					}
 				}
-				if (hasRAnnotations)
-					deleteItem.setEnabled(false);
-				else {
-					// Add a listener to remove the annotation
-					deleteItem.addListener(SWT.Selection, new Listener() {
-						@Override
-						public void handleEvent(Event e) {
-							reader.removeAnnotation(annotation);
-							reader.refresh();
-							redraw();
+				// Add a listener to remove the annotation and any R-type related annotations
+				deleteItem.addListener(SWT.Selection, new Listener() {
+					@Override
+					public void handleEvent(Event e) {
+						for (RAnnotation rAnnotation : annotationRAnnotations) {
+							reader.removeAnnotation(rAnnotation);
 						}
-					});
-				}
+						reader.removeAnnotation(annotation);
+						reader.refresh();
+						redraw();
+					}
+				});
 				menu.setVisible(true);
 			} else {
 				// If an R-type annotation is selected
