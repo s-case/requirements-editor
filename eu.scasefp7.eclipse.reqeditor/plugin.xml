@@ -169,4 +169,18 @@
       </menuContribution>
    </extension>
 
+   <extension
+      point = "org.eclipse.ui.preferencePages">
+      <page
+         id="eu.scasefp7.eclipse.reqeditor.preferences.Page"
+         class="eu.scasefp7.eclipse.reqeditor.preferences.ColorPreferencesPage"
+         name="Requirements Editor">
+      </page>
+   </extension>
+   <extension
+      point="org.eclipse.core.runtime.preferences">
+      <initializer class="eu.scasefp7.eclipse.reqeditor.preferences.DefaultPreferencesInitializer">
+      </initializer>
+   </extension>
+
 </plugin>
