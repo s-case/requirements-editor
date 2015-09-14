@@ -172,6 +172,7 @@
    <extension
       point = "org.eclipse.ui.preferencePages">
       <page
+         category="eu.scasefp7.eclipse.core.ui.preferences.global"
          id="eu.scasefp7.eclipse.reqeditor.preferences.Page"
          class="eu.scasefp7.eclipse.reqeditor.preferences.ColorPreferencesPage"
          name="Requirements Editor">
