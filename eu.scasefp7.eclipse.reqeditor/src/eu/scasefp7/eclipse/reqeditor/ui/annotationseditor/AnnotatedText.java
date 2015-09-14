@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
@@ -15,6 +16,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.ui.RAnnotation;
 import eu.scasefp7.eclipse.reqeditor.ui.Requirement;
 import eu.scasefp7.eclipse.reqeditor.ui.RequirementsReader;
@@ -37,12 +39,6 @@ public class AnnotatedText extends StyledTextWithListeners {
 	 * The color cyan.
 	 */
 	private Color CYAN;
-
-	/**
-	 * The color white.
-	 */
-	@SuppressWarnings("unused")
-	private Color WHITE;
 
 	/**
 	 * The color blue.
@@ -75,12 +71,19 @@ public class AnnotatedText extends StyledTextWithListeners {
 		final Display display = getDisplay();
 		BLACK = display.getSystemColor(SWT.COLOR_BLACK);
 		CYAN = display.getSystemColor(SWT.COLOR_CYAN);
-		WHITE = display.getSystemColor(SWT.COLOR_WHITE);
 		BLUE = display.getSystemColor(SWT.COLOR_BLUE);
 		textfont = new Font(display, "Courier New", 10, SWT.NORMAL);
 		annotationfont = new Font(display, "Tahoma", 9, SWT.NORMAL);
 		setCursor(new Cursor(display, SWT.CURSOR_ARROW));
 		setCaret(null);
+		if (Activator.getDefault() != null)
+			Activator.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+				@Override
+				public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+					if (reader != null && !isDisposed())
+						setTextAndAnnotations(reader);
+				}
+			});
 	}
 
 	/**
@@ -127,14 +130,13 @@ public class AnnotatedText extends StyledTextWithListeners {
 
 						// Highlight annotations
 						Color backgroundColor = event.gc.getBackground();
-						event.gc.setBackground(CYAN);
+						setBackgroundColor(event, "EntityText");
 						event.gc.fillRectangle(xleft, ytop + lineHeight, xwidth, ywidth);
 						event.gc.setBackground(backgroundColor);
 						Color foregroundColor = event.gc.getForeground();
 						event.gc.setForeground(BLACK);
 						event.gc.drawString(annotation.word, xleft + 1, ytop + lineHeight + 1, true);
 						event.gc.setForeground(foregroundColor);
-
 						event.gc.setFont(annotationfont);
 						int annotationWidth = event.gc.stringExtent(annotation.type).x;
 						boolean expandLeft = true;
@@ -179,7 +181,7 @@ public class AnnotatedText extends StyledTextWithListeners {
 
 						// Draw the rectangle and the text label
 						rLimits = annotation.rectangleLimits;
-						event.gc.setForeground(BLUE);
+						setForegroundColor(event, "Entity");
 						event.gc.drawRectangle(rLimits);
 						event.gc.drawText(annotation.type, rLimits.x + 1, rLimits.y, true);
 					}
@@ -217,6 +219,7 @@ public class AnnotatedText extends StyledTextWithListeners {
 						int rightX = xtwo;
 						int upperY = (int) (yone - 1.5 * lineHeight);
 						int lowerY = (int) (yone + 1.5 * lineHeight);
+						setForegroundColor(event, annotation.type);
 						event.gc.drawArc(leftX, upperY, rightX - leftX, lowerY - upperY, 0, 180);
 						event.gc.drawLine(rightX, upperY + lineHeight + 10, rightX + 3, upperY + lineHeight + 5);
 						event.gc.drawLine(rightX, upperY + lineHeight + 10, rightX - 3, upperY + lineHeight + 5);
@@ -249,6 +252,7 @@ public class AnnotatedText extends StyledTextWithListeners {
 						}
 
 						// Draw the label.
+						setForegroundColor(event, annotation.type);
 						event.gc.drawText(annotation.type, currentLeft, ypos, true);
 					}
 
@@ -266,6 +270,40 @@ public class AnnotatedText extends StyledTextWithListeners {
 					}
 					event.gc.setFont(textfont);
 				}
+			}
+
+			/**
+			 * Sets the foreground color using the given preferences.
+			 * 
+			 * @param event the event required to get the graphics context.
+			 * @param name the name of the preference to use.
+			 */
+			private void setForegroundColor(Event event, String name) {
+				if (Activator.getDefault() != null) {
+					String colorString = Activator.getDefault().getPreferenceStore().getString(name);
+					int r = Integer.parseInt(colorString.split(",")[0]);
+					int g = Integer.parseInt(colorString.split(",")[1]);
+					int b = Integer.parseInt(colorString.split(",")[2]);
+					event.gc.setForeground(new Color(getDisplay(), r, g, b));
+				} else
+					event.gc.setForeground(BLUE);
+			}
+
+			/**
+			 * Sets the background color using the given preferences.
+			 * 
+			 * @param event the event required to get the graphics context.
+			 * @param name the name of the preference to use.
+			 */
+			private void setBackgroundColor(Event event, String name) {
+				if (Activator.getDefault() != null) {
+					String colorString = Activator.getDefault().getPreferenceStore().getString(name);
+					int r = Integer.parseInt(colorString.split(",")[0]);
+					int g = Integer.parseInt(colorString.split(",")[1]);
+					int b = Integer.parseInt(colorString.split(",")[2]);
+					event.gc.setBackground(new Color(getDisplay(), r, g, b));
+				} else
+					event.gc.setBackground(CYAN);
 			}
 		});
 		redraw();

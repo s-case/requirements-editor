@@ -48,6 +48,11 @@ public class RequirementsTextEditor extends ScrolledComposite {
 	private RequirementsReader reader;
 
 	/**
+	 * Boolean indicating whether the widget is currently in add mode ({@code true}) or modify mode ({@code false}).
+	 */
+	private boolean addMode;
+
+	/**
 	 * Initializes this widget.
 	 * 
 	 * @param parent the parent widget of the new instance.
@@ -58,6 +63,7 @@ public class RequirementsTextEditor extends ScrolledComposite {
 		grid = null;
 		buttonAreas = new HashMap<Integer, ButtonArea>();
 		requirementsTexts = new HashMap<Integer, RequirementsText>();
+		addMode = true;
 	}
 
 	/**
@@ -208,31 +214,34 @@ public class RequirementsTextEditor extends ScrolledComposite {
 						addListeners(requirementId);
 					}
 				});
+				addMode = false;
 
 				// Add a listener for confirming using the enter key and canceling using the escape key
 				requirementsText.addVerifyKeyListener(new VerifyKeyListener() {
 					@Override
 					public void verifyKey(VerifyEvent e) {
-						if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-							// Set the changes and refresh
-							e.doit = false;
-							requirementsText.finalizeEdit();
-							reader.modifyRequirement(requirementId, requirementsText.getText());
-							reader.refresh();
-							buttonArea.removeAllButtons();
-							buttonArea.newButtons("Delete", "Modify", "Move down", "Move up");
-							setSizeAndLayout();
-							enableAllButtons();
-							addListeners(requirementId);
-						} else if (e.keyCode == SWT.ESC) {
-							// Cancel the changes and set back the old buttons and enable them
-							e.doit = false;
-							buttonArea.removeAllButtons();
-							requirementsText.cancelEdit();
-							buttonArea.newButtons("Delete", "Modify", "Move down", "Move up");
-							setSizeAndLayout();
-							enableAllButtons();
-							addListeners(requirementId);
+						if (!addMode){
+							if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
+								// Set the changes and refresh
+								e.doit = false;
+								requirementsText.finalizeEdit();
+								reader.modifyRequirement(requirementId, requirementsText.getText());
+								reader.refresh();
+								buttonArea.removeAllButtons();
+								buttonArea.newButtons("Delete", "Modify", "Move down", "Move up");
+								setSizeAndLayout();
+								enableAllButtons();
+								addListeners(requirementId);
+							} else if (e.keyCode == SWT.ESC) {
+								// Cancel the changes and set back the old buttons and enable them
+								e.doit = false;
+								buttonArea.removeAllButtons();
+								requirementsText.cancelEdit();
+								buttonArea.newButtons("Delete", "Modify", "Move down", "Move up");
+								setSizeAndLayout();
+								enableAllButtons();
+								addListeners(requirementId);
+							}
 						}
 					}
 				});
@@ -310,32 +319,35 @@ public class RequirementsTextEditor extends ScrolledComposite {
 						enableAllButtons();
 					}
 				});
+				addMode = true;
 
 				// Add a listener for confirming using the enter key and canceling using the escape key
 				requirementsText.addVerifyKeyListener(new VerifyKeyListener() {
 					@Override
 					public void verifyKey(VerifyEvent e) {
-						if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-							// Set the changes and refresh
-							e.doit = false;
-							requirementsText.finalizeEdit();
-							reader.addRequirement(requirementId, requirementsText.getText());
-							reader.refresh();
-							buttonArea.removeAllButtons();
-							buttonArea.newButtons("Delete", "Modify", "Move down", "Move up");
-							setSizeAndLayout();
-							buttonAreas.put(requirementId, buttonArea);
-							requirementsTexts.put(requirementId, requirementsText);
-							enableAllButtons();
-							addListeners(requirementId);
-						} else if (e.keyCode == SWT.ESC) {
-							// Cancel the changes, dispose the new buttons and set back the old buttons and enable them
-							e.doit = false;
-							requirementsText.cancelEdit();
-							requirementsText.dispose();
-							buttonArea.dispose();
-							setSizeAndLayout();
-							enableAllButtons();
+						if (addMode){
+							if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
+								// Set the changes and refresh
+								e.doit = false;
+								requirementsText.finalizeEdit();
+								reader.addRequirement(requirementId, requirementsText.getText());
+								reader.refresh();
+								buttonArea.removeAllButtons();
+								buttonArea.newButtons("Delete", "Modify", "Move down", "Move up");
+								setSizeAndLayout();
+								buttonAreas.put(requirementId, buttonArea);
+								requirementsTexts.put(requirementId, requirementsText);
+								enableAllButtons();
+								addListeners(requirementId);
+							} else if (e.keyCode == SWT.ESC) {
+								// Cancel the changes, dispose the new buttons and set back the old buttons and enable them
+								e.doit = false;
+								requirementsText.cancelEdit();
+								requirementsText.dispose();
+								buttonArea.dispose();
+								setSizeAndLayout();
+								enableAllButtons();
+							}
 						}
 					}
 				});

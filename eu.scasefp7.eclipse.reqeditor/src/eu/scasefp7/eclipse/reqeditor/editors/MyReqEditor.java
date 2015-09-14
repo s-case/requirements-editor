@@ -3,6 +3,7 @@ package eu.scasefp7.eclipse.reqeditor.editors;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -189,7 +190,7 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 	 * @param event an event denoting the resource has changed.
 	 */
 	public void resourceChanged(final IResourceChangeEvent event) {
-		if (event.getType() == IResourceChangeEvent.PRE_CLOSE) {
+		if (event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
@@ -202,6 +203,23 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 					}
 				}
 			});
+		}
+		else if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null) {
+				delta = delta.findMember(((FileEditorInput) editor.getEditorInput()).getFile().getFullPath());
+				if (delta != null && delta.getKind() == IResourceDelta.REMOVED) {
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
+							for (int i = 0; i < pages.length; i++) {
+								IEditorPart editorPart = pages[i].findEditor(editor.getEditorInput());
+								pages[i].closeEditor(editorPart, true);
+							}
+						}
+					});
+				}
+			}
 		}
 	}
 

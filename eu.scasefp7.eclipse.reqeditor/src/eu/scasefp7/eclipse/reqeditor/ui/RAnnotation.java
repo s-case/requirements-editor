@@ -85,7 +85,7 @@ public class RAnnotation extends Annotation {
 	/**
 	 * A {@link Comparator} used to sort the annotations according to their label position.
 	 */
-	public static Comparator<RAnnotation> LabelPositionComparator = new Comparator<RAnnotation>() {
+	public static final Comparator<RAnnotation> LabelPositionComparator = new Comparator<RAnnotation>() {
 		public int compare(RAnnotation annotation1, RAnnotation annotation2) {
 			Integer xpos1 = annotation1.labelPosition.x;
 			Integer xpos2 = annotation2.labelPosition.x;

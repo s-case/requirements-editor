@@ -126,7 +126,7 @@ public class RequirementsReader {
 	 */
 	public void parseFile(String path) {
 		try {
-			Scanner filescanner = new Scanner(new File(path));
+			Scanner filescanner = new Scanner(new File(path), "UTF-8");
 			parseData(filescanner);
 			filescanner.close();
 		} catch (FileNotFoundException e) {

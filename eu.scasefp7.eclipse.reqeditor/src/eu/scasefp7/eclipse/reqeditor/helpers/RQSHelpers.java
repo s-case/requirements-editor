@@ -28,7 +28,7 @@ public class RQSHelpers {
 		String requirementsString = "";
 		String annotationsString = "";
 		try {
-			scanner = new Scanner(file.getContents());
+			scanner = new Scanner(file.getContents(), "UTF-8");
 			ArrayList<String> requirements = new ArrayList<String>();
 			ArrayList<String> annotations = new ArrayList<String>();
 			boolean parseRequirements = false;
@@ -81,7 +81,7 @@ public class RQSHelpers {
 	public static ArrayList<String> getRequirements(IFile file) {
 		ArrayList<String> requirements = null;
 		try {
-			Scanner scanner = new Scanner(file.getContents());
+			Scanner scanner = new Scanner(file.getContents(), "UTF-8");
 			requirements = getRequirements(scanner);
 			scanner.close();
 		} catch (CoreException e) {
@@ -112,7 +112,7 @@ public class RQSHelpers {
 	public static ArrayList<String> getRequirements(File file) {
 		ArrayList<String> requirements = null;
 		try {
-			Scanner scanner = new Scanner(file);
+			Scanner scanner = new Scanner(file, "UTF-8");
 			requirements = getRequirements(scanner);
 			scanner.close();
 		} catch (FileNotFoundException e) {
@@ -155,7 +155,7 @@ public class RQSHelpers {
 	public static ArrayList<String> getAnnotations(IFile file) {
 		ArrayList<String> annotations = null;
 		try {
-			Scanner scanner = new Scanner(file.getContents());
+			Scanner scanner = new Scanner(file.getContents(), "UTF-8");
 			annotations = getAnnotations(scanner);
 			scanner.close();
 		} catch (CoreException e) {
@@ -186,7 +186,7 @@ public class RQSHelpers {
 	public static ArrayList<String> getAnnotations(File file) {
 		ArrayList<String> annotations = null;
 		try {
-			Scanner scanner = new Scanner(file);
+			Scanner scanner = new Scanner(file, "UTF-8");
 			annotations = getAnnotations(scanner);
 			scanner.close();
 		} catch (FileNotFoundException e) {

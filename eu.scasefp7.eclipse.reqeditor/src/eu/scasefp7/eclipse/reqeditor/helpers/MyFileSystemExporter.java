@@ -106,7 +106,7 @@ public class MyFileSystemExporter extends FileSystemExporter {
 		else {
 			String RQS = "";
 			try {
-				Scanner scanner = new Scanner(file.getContents());
+				Scanner scanner = new Scanner(file.getContents(), "UTF-8");
 				while (scanner.hasNextLine()) {
 					RQS += scanner.nextLine() + "\n";
 				}

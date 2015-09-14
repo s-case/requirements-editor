@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import eu.scasefp7.core.ontology.StaticOntologyAPI;
+import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
 
 /**
@@ -51,7 +51,7 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					ArrayList<String> annotations = RQSHelpers.getAnnotations(file);
 
 					// Instantiate the static ontology
-					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject().getName());
+					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject());
 
 					for (int i = 1; i < requirements.size() + 1; i++) {
 						// Add a new requirement
@@ -87,12 +87,16 @@ public class ExportToOntologyHandler extends AbstractHandler {
 									String anntype = anninfo.split(" ")[0];
 									String tann1 = anninfo.split(" ")[1];
 									String tann2 = anninfo.split(" ")[2];
-									if (anntype.equals("IsActorOf")) {
-										ontology.connectActorToAction(idmap.get(tann1), idmap.get(tann2));
-									} else if (anntype.equals("ActsOn")) {
-										ontology.connectActionToObject(idmap.get(tann1), idmap.get(tann2));
-									} else if (anntype.equals("HasProperty")) {
-										ontology.connectElementToProperty(idmap.get(tann1), idmap.get(tann2));
+									String entity1 = idmap.get(tann1);
+									String entity2 = idmap.get(tann2);
+									if (entity1 != null && entity2 != null) {
+										if (anntype.equals("IsActorOf")) {
+											ontology.connectActorToAction(entity1, entity2);
+										} else if (anntype.equals("ActsOn")) {
+											ontology.connectActionToObject(entity1, entity2);
+										} else if (anntype.equals("HasProperty")) {
+											ontology.connectElementToProperty(entity1, entity2);
+										}
 									}
 								}
 							}

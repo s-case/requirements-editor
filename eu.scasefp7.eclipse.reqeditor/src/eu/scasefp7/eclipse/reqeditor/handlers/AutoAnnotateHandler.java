@@ -200,12 +200,12 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 			urlc.setAllowUserInteraction(false);
 
 			// Send query
-			PrintStream ps = new PrintStream(urlc.getOutputStream());
+			PrintStream ps = new PrintStream(urlc.getOutputStream(), false, "UTF-8");
 			ps.print(query);
 			ps.close();
 
 			// Get result
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream(), "UTF-8"));
 			String l = null;
 			while ((l = br.readLine()) != null) {
 				response = l;

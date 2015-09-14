@@ -166,6 +166,11 @@ public class CreateRqsWizardPage extends WizardPage {
 			setPageComplete(false);
 			return;
 		}
+		if (((IContainer) container).getFile(new Path(fileName)).exists()) {
+			setErrorMessage("File name already exists");
+			setPageComplete(false);
+			return;
+		};
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);

@@ -104,7 +104,7 @@
       <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ClearAllAnnotationsHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotations"/>
    </extension>
    <extension point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
             <command commandId="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotations" id="eu.scasefp7.eclipse.reqeditor.menus.clearAnnotations" icon="icons/sample.gif">
                   <visibleWhen>
 				           <with variable="activeMenuSelection">
@@ -124,7 +124,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
             <command commandId="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotate" id="eu.scasefp7.eclipse.reqeditor.menus.autoAnnotate" icon="icons/sample.gif">
                   <visibleWhen>
 				           <with variable="activeMenuSelection">
@@ -140,11 +140,21 @@
    </extension>
 
    <extension point="org.eclipse.ui.handlers">
-      <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ExportToOntologyHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology"/>
+      <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ExportToOntologyHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology">
+      	<enabledWhen>
+   			<with variable="selection">
+    			<iterate ifEmpty="false">
+     				<adapt type="org.eclipse.core.resources.IResource">
+         				<test property="org.eclipse.core.resources.name" value="*.rqs" />
+        			</adapt>
+    			</iterate>
+           </with>
+      	</enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
             <command commandId="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology" id="eu.scasefp7.eclipse.reqeditor.menus.exportToOntology" icon="icons/sample.gif">
                   <visibleWhen>
 				           <with variable="activeMenuSelection">
@@ -157,6 +167,21 @@
                   </visibleWhen>
             </command>
       </menuContribution>
+   </extension>
+
+   <extension
+      point = "org.eclipse.ui.preferencePages">
+      <page
+         category="eu.scasefp7.eclipse.core.ui.preferences.global"
+         id="eu.scasefp7.eclipse.reqeditor.preferences.Page"
+         class="eu.scasefp7.eclipse.reqeditor.preferences.ColorPreferencesPage"
+         name="Requirements Editor">
+      </page>
+   </extension>
+   <extension
+      point="org.eclipse.core.runtime.preferences">
+      <initializer class="eu.scasefp7.eclipse.reqeditor.preferences.DefaultPreferencesInitializer">
+      </initializer>
    </extension>
 
 </plugin>

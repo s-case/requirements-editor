@@ -57,7 +57,7 @@ public class TAnnotation extends Annotation {
 	/**
 	 * A {@link Comparator} used to sort the annotations according to their label rectangle.
 	 */
-	public static Comparator<TAnnotation> LabelRectangleComparator = new Comparator<TAnnotation>() {
+	public static final Comparator<TAnnotation> LabelRectangleComparator = new Comparator<TAnnotation>() {
 		public int compare(TAnnotation annotation1, TAnnotation annotation2) {
 			Integer xpos1 = annotation1.rectangleLimits.x;
 			Integer xpos2 = annotation2.rectangleLimits.x;
