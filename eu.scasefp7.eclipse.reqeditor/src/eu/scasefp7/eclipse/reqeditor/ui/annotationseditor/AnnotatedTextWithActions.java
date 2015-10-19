@@ -17,6 +17,7 @@ import eu.scasefp7.eclipse.reqeditor.ui.Annotation;
 import eu.scasefp7.eclipse.reqeditor.ui.Limits;
 import eu.scasefp7.eclipse.reqeditor.ui.RAnnotation;
 import eu.scasefp7.eclipse.reqeditor.ui.RequirementsReader;
+import eu.scasefp7.eclipse.reqeditor.ui.SBDPhrasesReader;
 import eu.scasefp7.eclipse.reqeditor.ui.TAnnotation;
 
 /**
@@ -319,8 +320,14 @@ public class AnnotatedTextWithActions extends AnnotatedText {
 		shell.setSize(800, 800);
 		final Display display = shell.getDisplay();
 		final AnnotatedTextWithActions widget = new AnnotatedTextWithActions(shell, SWT.BORDER | SWT.V_SCROLL);
-		RequirementsReader reader = new RequirementsReader();
-		reader.parseFile(args[0]);
+		String filename = args[0];
+		String extension = filename.substring(filename.lastIndexOf('.') + 1);
+		RequirementsReader reader = null;
+		if (extension.equals("rqs"))
+			reader = new RequirementsReader();
+		else if (extension.equals("sbd"))
+			reader = new SBDPhrasesReader();
+		reader.parseFile(filename);
 		widget.setTextAndAnnotations(reader);
 		shell.open();
 		while (!shell.isDisposed())

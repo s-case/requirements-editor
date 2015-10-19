@@ -70,6 +70,19 @@ public class TAnnotation extends Annotation {
 		return Id + "\t" + type + " " + annLimits.left + " " + annLimits.right + "\t" + word;
 	}
 
+	/**
+	 * Returns a string representation of this object.
+	 * 
+	 * @param escape boolean denoting if the special characters must be escaped ({@code true}) or not ({@code false}).
+	 * @return a string representation of this object.
+	 */
+	public String toString(boolean escape) {
+		if (escape)
+			return Id + "\\t" + type + " " + annLimits.left + " " + annLimits.right + "\\t" + word;
+		else
+			return toString();
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

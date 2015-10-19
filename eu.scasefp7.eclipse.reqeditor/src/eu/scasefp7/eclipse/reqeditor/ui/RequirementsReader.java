@@ -1,7 +1,11 @@
 package eu.scasefp7.eclipse.reqeditor.ui;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,27 +35,27 @@ public class RequirementsReader {
 	/**
 	 * The editor containing the raw rws file.
 	 */
-	private TextEditor editor;
+	protected TextEditor editor;
 
 	/**
 	 * An list of the requirements.
 	 */
-	private ArrayList<Requirement> requirements;
+	protected ArrayList<Requirement> requirements;
 
 	/**
 	 * A list of the annotations. It is used to keep the order of the annotations.
 	 */
-	private ArrayList<Annotation> annotations;
+	protected ArrayList<Annotation> annotations;
 
 	/**
 	 * A map containing all T-type annotations.
 	 */
-	private IdHashMap<TAnnotation> tannotations;
+	protected IdHashMap<TAnnotation> tannotations;
 
 	/**
 	 * A map containing all R-type annotations.
 	 */
-	private IdHashMap<RAnnotation> rannotations;
+	protected IdHashMap<RAnnotation> rannotations;
 
 	/**
 	 * Initializes this reader.
@@ -126,9 +130,8 @@ public class RequirementsReader {
 	 */
 	public void parseFile(String path) {
 		try {
-			Scanner filescanner = new Scanner(new File(path), "UTF-8");
-			parseData(filescanner);
-			filescanner.close();
+			InputStream filestream = new FileInputStream(new File(path));
+			parseData(filestream);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -140,9 +143,8 @@ public class RequirementsReader {
 	 * @param string the string to be parsed.
 	 */
 	public void parseString(String string) {
-		Scanner stringscanner = new Scanner(string);
-		parseData(stringscanner);
-		stringscanner.close();
+		InputStream stringstream = new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
+		parseData(stringstream);
 	}
 
 	/**
@@ -154,18 +156,19 @@ public class RequirementsReader {
 			annotations = new ArrayList<Annotation>();
 			rannotations = new IdHashMap<RAnnotation>("R");
 			tannotations = new IdHashMap<TAnnotation>("T");
-			Scanner stringscanner = new Scanner(editor.getDocumentProvider().getDocument(editor.getEditorInput()).get());
-			parseData(stringscanner);
-			stringscanner.close();
+			InputStream stringstream = new ByteArrayInputStream(editor.getDocumentProvider()
+					.getDocument(editor.getEditorInput()).get().getBytes(StandardCharsets.UTF_8));
+			parseData(stringstream);
 		}
 	}
 
 	/**
-	 * Parses data from a {@link Scanner} object and extracts the requirements and the annotations.
+	 * Parses data from an {@link InputStream} and extracts the requirements and the annotations.
 	 * 
-	 * @param scanner the {@link Scanner} to parse data from.
+	 * @param scanner the {@link InputStream} to parse data from.
 	 */
-	public void parseData(Scanner scanner) {
+	public void parseData(InputStream stream) {
+		Scanner scanner = new Scanner(stream);
 		boolean parseRequirements = false;
 		boolean parseAnnotations = false;
 
@@ -183,31 +186,8 @@ public class RequirementsReader {
 			if (parseAnnotations) {
 				if (line.equals("------------"))
 					parseAnnotations = false;
-				else {
-					List<String> anndata = Arrays.asList(line.split("\t"));
-					String Id = anndata.get(0);
-					String[] annotationdata = anndata.get(1).split(" ");
-					String type = annotationdata[0];
-					if (Id.contains(":T")) {
-						// Read T-type annotation
-						String word = anndata.get(2);
-						Limits annlimits = new Limits(annotationdata[1], annotationdata[2]);
-						int reqnum = Integer.parseInt(Id.split(":")[0]);
-						TAnnotation annotation = new TAnnotation(reqnum, Id, type, word, annlimits);
-						tannotations.put(Id, annotation);
-						annotations.add(annotation);
-					} else if (Id.contains(":R")) {
-						// Read R-type annotation
-						String Arg1 = annotationdata[1];
-						String Arg2 = annotationdata[2];
-						int reqnum = Integer.parseInt(Id.split(":")[0]);
-						if (reqnum > 0) {
-							RAnnotation annotation = new RAnnotation(reqnum, Id, type, Arg1, Arg2);
-							rannotations.put(Id, annotation);
-							annotations.add(annotation);
-						}
-					}
-				}
+				else
+					parseAnnotation(line);
 			}
 			if (line.equals("REQUIREMENTS")) {
 				parseRequirements = true;
@@ -217,6 +197,48 @@ public class RequirementsReader {
 			if (line.equals("ANNOTATIONS")) {
 				parseAnnotations = true;
 				line = scanner.nextLine();
+			}
+		}
+		scanner.close();
+	}
+
+	/**
+	 * Parses an annotation and adds it to the annotations of this rqs file.
+	 * 
+	 * @param annotationLine the string annotation to be parsed.
+	 */
+	protected void parseAnnotation(String annotationLine) {
+		parseAnnotation(annotationLine, false);
+	}
+
+	/**
+	 * Parses an annotation and adds it to the annotations of this rqs file.
+	 * 
+	 * @param annotationLine the string annotation to be parsed.
+	 * @param escape boolean denoting if the special characters must be escaped ({@code true}) or not ({@code false}).
+	 */
+	protected void parseAnnotation(String annotationLine, boolean escape) {
+		List<String> anndata = Arrays.asList(escape ? annotationLine.split("\\\\t") : annotationLine.split("\t"));
+		String Id = anndata.get(0);
+		String[] annotationdata = anndata.get(1).split(" ");
+		String type = annotationdata[0];
+		if (Id.contains(":T")) {
+			// Read T-type annotation
+			String word = anndata.get(2);
+			Limits annlimits = new Limits(annotationdata[1], annotationdata[2]);
+			int reqnum = Integer.parseInt(Id.split(":")[0]);
+			TAnnotation annotation = new TAnnotation(reqnum, Id, type, word, annlimits);
+			tannotations.put(Id, annotation);
+			annotations.add(annotation);
+		} else if (Id.contains(":R")) {
+			// Read R-type annotation
+			String Arg1 = annotationdata[1];
+			String Arg2 = annotationdata[2];
+			int reqnum = Integer.parseInt(Id.split(":")[0]);
+			if (reqnum > 0) {
+				RAnnotation annotation = new RAnnotation(reqnum, Id, type, Arg1, Arg2);
+				rannotations.put(Id, annotation);
+				annotations.add(annotation);
 			}
 		}
 	}
@@ -429,7 +451,7 @@ public class RequirementsReader {
 	public void addRAnnotation(String type, String Arg1, String Arg2) {
 		int reqnum = findRequirementOfAnnotation(Arg1, Arg2);
 		String Id = rannotations.getNewId(reqnum);
-		if (getTAnnotation(Arg1) != null && getTAnnotation(Arg2) != null){
+		if (getTAnnotation(Arg1) != null && getTAnnotation(Arg2) != null) {
 			RAnnotation annotation = new RAnnotation(reqnum, Id, type, Arg1, Arg2);
 			rannotations.put(Id, annotation);
 			annotations.add(annotation);

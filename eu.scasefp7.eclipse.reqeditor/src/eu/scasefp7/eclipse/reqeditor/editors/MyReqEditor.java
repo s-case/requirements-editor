@@ -18,6 +18,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 
 import eu.scasefp7.eclipse.reqeditor.ui.RequirementsReader;
+import eu.scasefp7.eclipse.reqeditor.ui.SBDPhrasesReader;
 import eu.scasefp7.eclipse.reqeditor.ui.annotationseditor.AnnotatedTextWithActions;
 import eu.scasefp7.eclipse.reqeditor.ui.requirementseditor.RequirementsTextEditor;
 
@@ -48,6 +49,8 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 	 */
 	private RequirementsReader reader;
 
+	private boolean isRQS;
+
 	/**
 	 * Initializes this object and creates the {@code editor} and the {@code reader}.
 	 */
@@ -56,6 +59,7 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		editor = new TextEditor();
 		reader = new RequirementsReader(editor);
+		isRQS = true;
 	}
 
 	/**
@@ -82,8 +86,10 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 		FillLayout layout = new FillLayout();
 		composite.setLayout(layout);
 		requirementsEditor = new RequirementsTextEditor(composite, SWT.H_SCROLL | SWT.V_SCROLL);
-		int index = addPage(composite);
-		setPageText(index, "Requirements");
+		if (isRQS) {
+			int index = addPage(composite);
+			setPageText(index, "Requirements");
+		}
 	}
 
 	/**
@@ -96,7 +102,10 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 		annotationsEditor = new AnnotatedTextWithActions(composite, SWT.H_SCROLL | SWT.V_SCROLL);
 		annotationsEditor.setEditable(false);
 		int index = addPage(composite);
-		setPageText(index, "Annotated Requirements");
+		if (isRQS)
+			setPageText(index, "Annotated Requirements");
+		else
+			setPageText(index, "Annotated Phrases");
 	}
 
 	/**
@@ -157,6 +166,13 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 	public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
 		if (!(editorInput instanceof IFileEditorInput))
 			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+		String extension = editorInput.getName().substring(editorInput.getName().lastIndexOf('.') + 1);
+		if (extension.equals("sbd")) {
+			isRQS = false;
+			reader = new SBDPhrasesReader(editor);
+			// System.out.println(editorInput);
+		} else
+			isRQS = true;
 		super.init(site, editorInput);
 	}
 
@@ -176,7 +192,10 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 		super.pageChange(newPageIndex);
 		reader.parseFromEditor();
 		if (newPageIndex == 0) {
-			requirementsEditor.setText(reader);
+			if (isRQS)
+				requirementsEditor.setText(reader);
+			else
+				annotationsEditor.setTextAndAnnotations(reader);
 			// requirementsEditor.setEditable(!reader.hasAnnotations());
 		}
 		if (newPageIndex == 1) {
@@ -203,8 +222,7 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 					}
 				}
 			});
-		}
-		else if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+		} else if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				delta = delta.findMember(((FileEditorInput) editor.getEditorInput()).getFile().getFullPath());
