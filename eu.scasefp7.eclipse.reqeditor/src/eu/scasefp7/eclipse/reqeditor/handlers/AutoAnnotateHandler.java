@@ -25,8 +25,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import eu.scasefp7.eclipse.reqeditor.helpers.JSON2Java;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
 
 /**
@@ -39,7 +40,7 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 	/**
 	 * The address of the NLP Server.
 	 */
-	private static final String NLPServerAddress = "http://155.207.19.236:8010/nlpserver/project";
+	private static final String NLPServerAddress = "http://nlp.scasefp7.eu:8010/nlpserver/project";
 
 	/**
 	 * This function is called when the user selects the menu item. It reads the selected resource(s) and automatically
@@ -116,7 +117,7 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 	 * @param requirements the requirements to be annotated.
 	 * @return the annotations of the requirements.
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static String getAnnotationsForRequirements(ArrayList<String> requirements) {
 		int j = 1;
 		String projectRequirements = "";
@@ -145,16 +146,16 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 		// \"annotation_format\":\"ann\"}";
 		if (response != null) {
 			String finalAnnotationsString = "";
-			HashMap jsonResponse = (HashMap) JSON2Java.parseJSON(response);
-			Object[] annotations = (Object[]) jsonResponse.get("annotations");
+			HashMap jsonResponse = (HashMap) parseJSON(response);
+			ArrayList<Object> annotations = (ArrayList<Object>) jsonResponse.get("annotations");
 			HashMap<String, ArrayList<String>> annotationsOfRequirements = new HashMap<String, ArrayList<String>>();
-			for (int i = 0; i < annotations.length; i++) {
-				HashMap annotationobject = (HashMap) annotations[i];
+			for (Object annotation : annotations) {
+				HashMap annotationobject = (HashMap) annotation;
 				String id = (String) annotationobject.get("id");
-				Object[] annForId = (Object[]) annotationobject.get("annotation");
+				ArrayList<Object> annForId = (ArrayList<Object>) annotationobject.get("annotation");
 				ArrayList<String> annotationsForId = new ArrayList<String>();
-				for (int k = 0; k < annForId.length; k++) {
-					annotationsForId.add((String) annForId[k]);
+				for (Object annForIdk : annForId) {
+					annotationsForId.add((String) annForIdk);
 				}
 				annotationsOfRequirements.put(id, annotationsForId);
 			}
@@ -217,6 +218,21 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 
 		}
 		return response;
+	}
+
+	/**
+	 * Parses a JSON string and returns a java object.
+	 * 
+	 * @param json the JSON string.
+	 * @return a java object including the JSON information.
+	 */
+	private static Object parseJSON(String json) {
+		JSONParser parser = new JSONParser();
+		try {
+			return parser.parse(json);
+		} catch (ParseException pe) {
+			throw new RuntimeException("Invalid json", pe);
+		}
 	}
 
 	/**
