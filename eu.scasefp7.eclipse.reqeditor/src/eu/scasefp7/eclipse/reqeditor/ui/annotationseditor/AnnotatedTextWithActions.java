@@ -114,7 +114,8 @@ public class AnnotatedTextWithActions extends AnnotatedText {
 						new String[] { "ActsOn", "Action", "Object" }, new String[] { "ActsOn", "Action", "Property" },
 						new String[] { "HasProperty", "Actor", "Property" },
 						new String[] { "HasProperty", "Object", "Property" },
-						new String[] { "HasProperty", "Property", "Property" } }) {
+						new String[] { "HasProperty", "Property", "Property" },
+						new String[] { "RelatesTo", "Object", "Object" } }) {
 					// Check whether the annotation may participate to any R-type annotation
 					final String rType = alltypes[0];
 					String selectedTType = alltypes[1];

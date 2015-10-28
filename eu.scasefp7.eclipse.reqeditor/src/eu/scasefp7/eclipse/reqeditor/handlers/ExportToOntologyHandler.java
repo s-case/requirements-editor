@@ -96,6 +96,8 @@ public class ExportToOntologyHandler extends AbstractHandler {
 											ontology.connectActionToObject(entity1, entity2);
 										} else if (anntype.equals("HasProperty")) {
 											ontology.connectElementToProperty(entity1, entity2);
+										} else if (anntype.equals("RelatesTo")) {
+											ontology.connectObjectToObject(entity1, entity2);
 										}
 									}
 								}

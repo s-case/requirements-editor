@@ -28,6 +28,7 @@ public class ColorPreferencesPage extends FieldEditorPreferencePage implements I
 		addField(new ColorFieldEditor("IsActorOf", "IsActorOf Annotation Color", getFieldEditorParent()));
 		addField(new ColorFieldEditor("ActsOn", "ActsOn Annotation Color", getFieldEditorParent()));
 		addField(new ColorFieldEditor("HasProperty", "HasProperty Annotation Color", getFieldEditorParent()));
+		addField(new ColorFieldEditor("RelatesTo", "RelatesTo Annotation Color", getFieldEditorParent()));
 	}
 
 	@Override

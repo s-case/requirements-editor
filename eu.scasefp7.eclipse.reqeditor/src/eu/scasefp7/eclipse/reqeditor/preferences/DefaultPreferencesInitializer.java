@@ -26,5 +26,6 @@ public class DefaultPreferencesInitializer extends AbstractPreferenceInitializer
 		store.setDefault("IsActorOf", "0,0,255");
 		store.setDefault("ActsOn", "0,0,255");
 		store.setDefault("HasProperty", "0,0,255");
+		store.setDefault("RelatesTo", "0,0,255");
 	}
 }
