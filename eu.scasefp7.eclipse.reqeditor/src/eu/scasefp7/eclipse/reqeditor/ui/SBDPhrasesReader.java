@@ -73,7 +73,8 @@ public class SBDPhrasesReader extends RequirementsReader {
 				if (node.getNodeName().equals("storyboardactions")) {
 					k++;
 					requirements.add(new Requirement(k, node.getAttributes().getNamedItem("name").getTextContent()));
-					if (node.getAttributes().getNamedItem("annotations") != null) {
+					if (node.getAttributes().getNamedItem("annotations") != null
+							&& !node.getAttributes().getNamedItem("annotations").getNodeValue().equals("")) {
 						String[] lineAnnotations = node.getAttributes().getNamedItem("annotations").getTextContent()
 								.split("\\\\n");
 						for (String line : lineAnnotations) {
