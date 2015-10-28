@@ -119,7 +119,8 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 											updateEditor(ffile);
 										}
 									});
-								} catch (TransformerException | ParserConfigurationException | SAXException | IOException | CoreException e) {
+								} catch (TransformerException | ParserConfigurationException | SAXException
+										| IOException | CoreException e) {
 									e.printStackTrace();
 								}
 							} else {
@@ -148,7 +149,8 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 		String projectRequirements = "";
 		for (String requirement : requirements) {
 			j++;
-			projectRequirements += "{\"id\":\"" + "FR" + (j - 1) + "\",\"text\":\"" + requirement + "\"},";
+			projectRequirements += "{\"id\":\"" + "FR" + (j - 1) + "\",\"text\":\"" + requirement.toLowerCase()
+					+ "\"},";
 		}
 		projectRequirements = projectRequirements.substring(0, projectRequirements.length() - 1);
 		int totalRequirements = j - 1;
@@ -193,8 +195,10 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 						String[] splitAnnotation = annotation.split(" ");
 						String newid = i + ":T" + splitAnnotation[0].substring(1);
 						String newtype = splitAnnotation[1].equals("Theme") ? "Object" : splitAnnotation[1];
+						String word = requirements.get(i - 1).substring(Integer.parseInt(splitAnnotation[2]),
+								Integer.parseInt(splitAnnotation[3]));
 						annotation = newid + "\\t" + newtype + " " + splitAnnotation[2] + " " + splitAnnotation[3]
-								+ "\\t" + splitAnnotation[4];
+								+ "\\t" + word;
 					} else if (annotation.startsWith("R")) {
 						String[] splitAnnotation = annotation.split(" ");
 						String newleftlimit = i + ":T" + splitAnnotation[2].split(":")[1].substring(1);
@@ -222,7 +226,9 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 		File file = new File(sbdfilename);
 		ArrayList<String> requirements = SBDHelpers.getRequirements(file);
 		ArrayList<String> finalAnnotationsString = AutoAnnotateSBDHandler.getAnnotationsForRequirements(requirements);
-		System.out.println(finalAnnotationsString);
+		for (String annotations : finalAnnotationsString) {
+			System.out.println(annotations);
+		}
 	}
 
 }
