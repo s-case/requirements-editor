@@ -1,20 +1,25 @@
 package eu.scasefp7.eclipse.reqeditor.handlers;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.ConnectException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,22 +30,20 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
+import eu.scasefp7.eclipse.reqeditor.helpers.SBDHelpers;
 
 /**
  * A command handler for automatically annotating an rqs file.
  * 
  * @author themis
  */
-public class AutoAnnotateHandler extends EditorAwareHandler {
-
-	/**
-	 * The address of the NLP Server.
-	 */
-	private static final String NLPServerAddress = "http://nlp.scasefp7.eu:8010/nlpserver/project";
+public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 
 	/**
 	 * This function is called when the user selects the menu item. It reads the selected resource(s) and automatically
@@ -68,24 +71,57 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 							}
 						}
 						if (file != null) {
-							// Read the requirements and the annotations of the file
-							String[] txtAndAnn = RQSHelpers.getRequirementsAndAnnotationsStrings(file);
-							// Get the new annotations for the requirements
-							String annotationsText = getAnnotationsForText(file);
-							if (annotationsText != null) {
+							// Read the requirements of the file
+							ArrayList<String> requirements = SBDHelpers.getRequirements(file);
+							ArrayList<String> annotations = getAnnotationsForRequirements(requirements);
+
+							// Get the new annotations for the storyboard
+							if (annotations != null) {
 								// Set the new annotations and update any open editors
-								String ntext = "REQUIREMENTS\n------------\n";
-								ntext += txtAndAnn[0];
-								ntext += "------------\n\nANNOTATIONS\n------------\n";
-								ntext += annotationsText;
-								ntext += "------------\n";
-								writeStringToFile(ntext, file);
-								final IFile ffile = file;
-								Display.getDefault().asyncExec(new Runnable() {
-									public void run() {
-										updateEditor(ffile);
+
+								DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+								DocumentBuilder db;
+								try {
+									db = dbf.newDocumentBuilder();
+									Document dom = db.parse(file.getContents());
+									Element doc = dom.getDocumentElement();
+									doc.normalize();
+
+									Node root = doc.getElementsByTagName("auth.storyboards:StoryboardDiagram").item(0);
+									NodeList nodes = root.getChildNodes();
+									int k = 0;
+									for (int i = 0; i < nodes.getLength(); i++) {
+										Node node = nodes.item(i);
+										if (node.getNodeName().equals("storyboardactions")) {
+											String annotationsText = annotations.get(k);
+											k++;
+											if (!annotationsText.equals("")) {
+												annotationsText = annotationsText.substring(0,
+														annotationsText.length() - 2);
+												if (node.getAttributes().getNamedItem("annotations") == null)
+													node.getAttributes().setNamedItem(
+															node.getOwnerDocument().createAttribute("annotations"));
+												node.getAttributes().getNamedItem("annotations")
+														.setTextContent(annotationsText);
+											}
+										}
 									}
-								});
+									TransformerFactory tf = TransformerFactory.newInstance();
+									Transformer transformer = tf.newTransformer();
+									StringWriter writer = new StringWriter();
+									transformer.transform(new DOMSource(doc), new StreamResult(writer));
+									String ntext = writer.getBuffer().toString();
+									ntext = new StringBuilder(ntext).insert(ntext.indexOf('>') + 1, "\n").toString();
+									writeStringToFile(ntext, file);
+									final IFile ffile = file;
+									Display.getDefault().asyncExec(new Runnable() {
+										public void run() {
+											updateEditor(ffile);
+										}
+									});
+								} catch (TransformerException | ParserConfigurationException | SAXException | IOException | CoreException e) {
+									e.printStackTrace();
+								}
 							} else {
 								return Status.CANCEL_STATUS;
 							}
@@ -101,24 +137,13 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 	}
 
 	/**
-	 * Automatically annotates the given file resource.
-	 * 
-	 * @param file the resource to be annotated.
-	 * @return the annotations of the file.
-	 */
-	private String getAnnotationsForText(IFile file) {
-		ArrayList<String> requirements = RQSHelpers.getRequirements(file);
-		return getAnnotationsForRequirements(requirements);
-	}
-
-	/**
 	 * Automatically annotates the given requirements.
 	 * 
 	 * @param requirements the requirements to be annotated.
 	 * @return the annotations of the requirements.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static String getAnnotationsForRequirements(ArrayList<String> requirements) {
+	private static ArrayList<String> getAnnotationsForRequirements(ArrayList<String> requirements) {
 		int j = 1;
 		String projectRequirements = "";
 		for (String requirement : requirements) {
@@ -145,7 +170,6 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 		// Arg2:T1\", "T1 Action 23 29 create\",\"T2 Theme 37 44 account\",\"T3 Actor 2 6 user\"]},...],
 		// \"annotation_format\":\"ann\"}";
 		if (response != null) {
-			String finalAnnotationsString = "";
 			HashMap jsonResponse = (HashMap) parseJSON(response);
 			ArrayList<Object> annotations = (ArrayList<Object>) jsonResponse.get("annotations");
 			HashMap<String, ArrayList<String>> annotationsOfRequirements = new HashMap<String, ArrayList<String>>();
@@ -160,92 +184,44 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 				annotationsOfRequirements.put(id, annotationsForId);
 			}
 
+			ArrayList<String> annotationsString = new ArrayList<String>();
 			for (int i = 1; i < totalRequirements + 1; i++) {
 				String id = "FR" + i;
+				String finalAnnotationsString = "";
 				for (String annotation : annotationsOfRequirements.get(id)) {
 					if (annotation.startsWith("T")) {
 						String[] splitAnnotation = annotation.split(" ");
 						String newid = i + ":T" + splitAnnotation[0].substring(1);
 						String newtype = splitAnnotation[1].equals("Theme") ? "Object" : splitAnnotation[1];
-						annotation = newid + "\t" + newtype + " " + splitAnnotation[2] + " " + splitAnnotation[3]
-								+ "\t" + splitAnnotation[4];
+						annotation = newid + "\\t" + newtype + " " + splitAnnotation[2] + " " + splitAnnotation[3]
+								+ "\\t" + splitAnnotation[4];
 					} else if (annotation.startsWith("R")) {
 						String[] splitAnnotation = annotation.split(" ");
 						String newleftlimit = i + ":T" + splitAnnotation[2].split(":")[1].substring(1);
 						String newrightlimit = i + ":T" + splitAnnotation[3].split(":")[1].substring(1);
 						String newid = i + ":R" + splitAnnotation[0].substring(1);
-						annotation = newid + "\t" + splitAnnotation[1] + " " + newleftlimit + " " + newrightlimit;
+						annotation = newid + "\\t" + splitAnnotation[1] + " " + newleftlimit + " " + newrightlimit;
 					}
-					finalAnnotationsString += annotation + "\n";
+					finalAnnotationsString += annotation + "\\n";
 				}
+				annotationsString.add(finalAnnotationsString);
 			}
-			return finalAnnotationsString;
+			return annotationsString;
 		} else
 			return null;
 	}
 
 	/**
-	 * Makes a REST request with JSON body to the NLP server and returns the response in JSON format.
+	 * This is a test function that receives an sbd file and automatically annotates it. The path to the sbd file must
+	 * be given as an argument (e.g. "path/to/new_file.sbd")
 	 * 
-	 * @param query the JSON query to be sent.
-	 * @return the JSON response of the request.
-	 */
-	protected static String makeRestRequest(String query) {
-		String response = null;
-		try {
-			URL url = new URL(NLPServerAddress);
-			// Open POST connection
-			URLConnection urlc = url.openConnection();
-			urlc.setRequestProperty("Content-Type", "application/json");
-			urlc.setDoOutput(true);
-			urlc.setAllowUserInteraction(false);
-
-			// Send query
-			PrintStream ps = new PrintStream(urlc.getOutputStream(), false, "UTF-8");
-			ps.print(query);
-			ps.close();
-
-			// Get result
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream(), "UTF-8"));
-			String l = null;
-			while ((l = br.readLine()) != null) {
-				response = l;
-			}
-			br.close();
-		} catch (ConnectException e) {
-
-		} catch (IOException e) {
-
-		}
-		return response;
-	}
-
-	/**
-	 * Parses a JSON string and returns a java object.
-	 * 
-	 * @param json the JSON string.
-	 * @return a java object including the JSON information.
-	 */
-	protected static Object parseJSON(String json) {
-		JSONParser parser = new JSONParser();
-		try {
-			return parser.parse(json);
-		} catch (ParseException pe) {
-			throw new RuntimeException("Invalid json", pe);
-		}
-	}
-
-	/**
-	 * This is a test function that receives an rqs file and automatically annotates it. The path to the rqs file must
-	 * be given as an argument (e.g. "path/to/new_file.rqs")
-	 * 
-	 * @param args the arguments given to this function, the first and only argument is the path to the rqs file.
+	 * @param args the arguments given to this function, the first and only argument is the path to the sbd file.
 	 */
 	public static void main(String[] args) {
-		String rqsfilename = args[0];
-		File file = new File(rqsfilename);
-		ArrayList<String> requirements = RQSHelpers.getRequirements(file);
-		String finalAnnotationsString = AutoAnnotateHandler.getAnnotationsForRequirements(requirements);
+		String sbdfilename = args[0];
+		File file = new File(sbdfilename);
+		ArrayList<String> requirements = SBDHelpers.getRequirements(file);
+		ArrayList<String> finalAnnotationsString = AutoAnnotateSBDHandler.getAnnotationsForRequirements(requirements);
 		System.out.println(finalAnnotationsString);
 	}
 

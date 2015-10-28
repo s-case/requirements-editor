@@ -96,7 +96,9 @@
    <extension point="org.eclipse.ui.commands">
       <category id="eu.scasefp7.eclipse.reqeditor.commands.category" name="SCaseReqEditor Commands Category"/>
       <command categoryId="eu.scasefp7.eclipse.reqeditor.commands.category" id="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotations" name="Clear all annotations"/>
+      <command categoryId="eu.scasefp7.eclipse.reqeditor.commands.category" id="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotationsSBD" name="Clear all annotations"/>
       <command categoryId="eu.scasefp7.eclipse.reqeditor.commands.category" id="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotate" name="Auto annotate"/>
+      <command categoryId="eu.scasefp7.eclipse.reqeditor.commands.category" id="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotateSBD" name="Auto annotate diagram instances"/>
       <command categoryId="eu.scasefp7.eclipse.reqeditor.commands.category" id="eu.scasefp7.eclipse.reqeditor.commands.exportToOntology" name="Export to ontology"/>
    </extension>
 
@@ -120,6 +122,25 @@
    </extension>
 
    <extension point="org.eclipse.ui.handlers">
+      <handler class="eu.scasefp7.eclipse.reqeditor.handlers.ClearAllAnnotationsSBDHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotationsSBD"/>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
+            <command commandId="eu.scasefp7.eclipse.reqeditor.commands.clearAnnotationsSBD" id="eu.scasefp7.eclipse.reqeditor.menus.clearAnnotationsSBD" icon="icons/sample.gif">
+                  <visibleWhen>
+				           <with variable="activeMenuSelection">
+				            <iterate ifEmpty="false">
+				             <adapt type="org.eclipse.core.resources.IResource">
+				               <test property="org.eclipse.core.resources.name" value="*sbd" />
+				             </adapt>
+				            </iterate>
+				           </with>
+                  </visibleWhen>
+            </command>
+      </menuContribution>
+   </extension>
+
+   <extension point="org.eclipse.ui.handlers">
       <handler class="eu.scasefp7.eclipse.reqeditor.handlers.AutoAnnotateHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotate"/>
    </extension>
    <extension
@@ -131,6 +152,26 @@
 				            <iterate ifEmpty="false">
 				             <adapt type="org.eclipse.core.resources.IResource">
 				               <test property="org.eclipse.core.resources.name" value="*rqs" />
+				             </adapt>
+				            </iterate>
+				           </with>
+                  </visibleWhen>
+            </command>
+      </menuContribution>
+   </extension>
+
+   <extension point="org.eclipse.ui.handlers">
+      <handler class="eu.scasefp7.eclipse.reqeditor.handlers.AutoAnnotateSBDHandler" commandId="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotateSBD"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
+            <command commandId="eu.scasefp7.eclipse.reqeditor.commands.autoAnnotateSBD" id="eu.scasefp7.eclipse.reqeditor.menus.autoAnnotateSBD" icon="icons/sample.gif">
+                  <visibleWhen>
+				           <with variable="activeMenuSelection">
+				            <iterate ifEmpty="false">
+				             <adapt type="org.eclipse.core.resources.IResource">
+				               <test property="org.eclipse.core.resources.name" value="*sbd" />
 				             </adapt>
 				            </iterate>
 				           </with>
