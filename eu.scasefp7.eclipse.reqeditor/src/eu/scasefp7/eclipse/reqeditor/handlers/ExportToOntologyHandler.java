@@ -81,7 +81,14 @@ public class ExportToOntologyHandler extends AbstractHandler {
 										ontology.connectRequirementToConcept(reqId, annword);
 									}
 									idmap.put(Id, annword);
-								} else if (type.equals("R")) {
+								}
+							}
+						}
+						for (String annotation : annotations) {
+							if (annotation.startsWith(i + ":")) {
+								String Id = annotation.split("\t")[0];
+								String type = Id.split(":")[1].substring(0, 1);
+								if (type.equals("R")) {
 									// Add a property in the ontology
 									String anninfo = annotation.split("\t")[1];
 									String anntype = anninfo.split(" ")[0];
