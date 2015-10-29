@@ -19,6 +19,7 @@ import eu.scasefp7.eclipse.reqeditor.ui.RAnnotation;
 import eu.scasefp7.eclipse.reqeditor.ui.RequirementsReader;
 import eu.scasefp7.eclipse.reqeditor.ui.SBDPhrasesReader;
 import eu.scasefp7.eclipse.reqeditor.ui.TAnnotation;
+import eu.scasefp7.eclipse.reqeditor.ui.UMLPhrasesReader;
 
 /**
  * Class that shows the text and annotations (extended by {@link AnnotatedText}) and also includes action listeners for
@@ -328,6 +329,8 @@ public class AnnotatedTextWithActions extends AnnotatedText {
 			reader = new RequirementsReader();
 		else if (extension.equals("sbd"))
 			reader = new SBDPhrasesReader();
+		else if (extension.equals("uml"))
+			reader = new UMLPhrasesReader();
 		reader.parseFile(filename);
 		widget.setTextAndAnnotations(reader);
 		shell.open();

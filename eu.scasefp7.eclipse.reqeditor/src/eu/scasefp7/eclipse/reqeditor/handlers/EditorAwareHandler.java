@@ -52,7 +52,7 @@ public abstract class EditorAwareHandler extends AbstractHandler {
 			int activePage = editor.getActivePage();
 			if (activePage == 1)
 				editor.setActivePage(1);
-			else if (activePage == 0 && file.getName().endsWith(".sbd"))
+			else if (activePage == 0 && (file.getName().endsWith(".sbd") || file.getName().endsWith(".uml")))
 				editor.setActivePage(0);
 		}
 	}

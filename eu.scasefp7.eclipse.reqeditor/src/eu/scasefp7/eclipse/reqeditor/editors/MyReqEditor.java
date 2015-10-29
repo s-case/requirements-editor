@@ -19,6 +19,7 @@ import org.eclipse.ui.ide.IDE;
 
 import eu.scasefp7.eclipse.reqeditor.ui.RequirementsReader;
 import eu.scasefp7.eclipse.reqeditor.ui.SBDPhrasesReader;
+import eu.scasefp7.eclipse.reqeditor.ui.UMLPhrasesReader;
 import eu.scasefp7.eclipse.reqeditor.ui.annotationseditor.AnnotatedTextWithActions;
 import eu.scasefp7.eclipse.reqeditor.ui.requirementseditor.RequirementsTextEditor;
 
@@ -49,6 +50,9 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 	 */
 	private RequirementsReader reader;
 
+	/**
+	 * Boolean denoting whether the file to be annotated is an rqs or not.
+	 */
 	private boolean isRQS;
 
 	/**
@@ -170,7 +174,9 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 		if (extension.equals("sbd")) {
 			isRQS = false;
 			reader = new SBDPhrasesReader(editor);
-			// System.out.println(editorInput);
+		} else if (extension.equals("uml")) {
+			isRQS = false;
+			reader = new UMLPhrasesReader(editor);
 		} else
 			isRQS = true;
 		super.init(site, editorInput);

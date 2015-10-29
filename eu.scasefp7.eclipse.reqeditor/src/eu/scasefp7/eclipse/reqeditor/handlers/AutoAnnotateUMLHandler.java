@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -36,14 +36,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import eu.scasefp7.eclipse.reqeditor.helpers.SBDHelpers;
+import eu.scasefp7.eclipse.reqeditor.helpers.UMLHelpers;
 
 /**
- * A command handler for automatically annotating an sbd file.
+ * A command handler for automatically annotating a uml file.
  * 
  * @author themis
  */
-public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
+public class AutoAnnotateUMLHandler extends AutoAnnotateSBDHandler {
 
 	/**
 	 * This function is called when the user selects the menu item. It reads the selected resource(s) and automatically
@@ -72,7 +72,7 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 						}
 						if (file != null) {
 							// Read the requirements of the file
-							ArrayList<String> requirements = SBDHelpers.getRequirements(file);
+							ArrayList<String> requirements = UMLHelpers.getRequirements(file);
 							ArrayList<String> annotations = getAnnotationsForRequirements(requirements);
 
 							// Get the new annotations for the storyboard
@@ -87,12 +87,16 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 									Element doc = dom.getDocumentElement();
 									doc.normalize();
 
-									Node root = doc.getElementsByTagName("auth.storyboards:StoryboardDiagram").item(0);
+									Node root = doc.getFirstChild().getNextSibling();
 									NodeList nodes = root.getChildNodes();
 									int k = 0;
 									for (int i = 0; i < nodes.getLength(); i++) {
 										Node node = nodes.item(i);
-										if (node.getNodeName().equals("storyboardactions")) {
+										if (node.getNodeName().equals("node")
+												&& (node.getAttributes().getNamedItem("xmi:type").getTextContent()
+														.equals("uml:OpaqueAction") || node.getAttributes()
+														.getNamedItem("xmi:type").getTextContent()
+														.equals("uml:UseCaseNode"))) {
 											String annotationsText = annotations.get(k);
 											k++;
 											if (!annotationsText.equals("")) {
@@ -108,10 +112,10 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 									}
 									TransformerFactory tf = TransformerFactory.newInstance();
 									Transformer transformer = tf.newTransformer();
+									transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 									StringWriter writer = new StringWriter();
 									transformer.transform(new DOMSource(doc), new StreamResult(writer));
 									String ntext = writer.getBuffer().toString();
-									ntext = new StringBuilder(ntext).insert(ntext.indexOf('>') + 1, "\n").toString();
 									writeStringToFile(ntext, file);
 									final IFile ffile = file;
 									Display.getDefault().asyncExec(new Runnable() {
@@ -138,94 +142,16 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 	}
 
 	/**
-	 * Automatically annotates the given requirements.
-	 * 
-	 * @param requirements the requirements to be annotated.
-	 * @return the annotations of the requirements.
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected static ArrayList<String> getAnnotationsForRequirements(ArrayList<String> requirements) {
-		int j = 1;
-		String projectRequirements = "";
-		for (String requirement : requirements) {
-			j++;
-			projectRequirements += "{\"id\":\"" + "FR" + (j - 1) + "\",\"text\":\"" + requirement.toLowerCase()
-					+ "\"},";
-		}
-		projectRequirements = projectRequirements.substring(0, projectRequirements.length() - 1);
-		int totalRequirements = j - 1;
-		String query = "{\"project_name\":\"any\",\"annotation_format\":\"ann\",\"project_requirements\":["
-				+ projectRequirements + "]}";
-
-		// Example query:
-		// "{\"project_name\":\"any\",\"project_requirements\":
-		// [{\"id\":\"FR1\",\"text\":\"The user must be able to create an account.\"},
-		// {\"id\":\"FR2\",\"text\":\"The user must be able to login to his/her account.\"},
-		// ...],\"annotation_format\":\"ann\"}";
-
-		String response = makeRestRequest(query);
-		// Example Response:
-		// "{\"created_at\":\"2015-03-16T13:08Z\",\"project_name\":\"any\",\"project_requirements\":
-		// [{\"id\":\"FR1\",\"text\":\"The user must be able to create an account.\"},
-		// {\"id\":\"FR2\",\"text\":\"The user must be able to login to his/her account.\"},...],
-		// \"annotations\":[{\"id\":\"FR1\",\"annotation\":[\"R1 ActsOn Arg1:T1 Arg2:T2\",\"R3 IsActorOf Arg1:T3
-		// Arg2:T1\", "T1 Action 23 29 create\",\"T2 Theme 37 44 account\",\"T3 Actor 2 6 user\"]},...],
-		// \"annotation_format\":\"ann\"}";
-		if (response != null) {
-			HashMap jsonResponse = (HashMap) parseJSON(response);
-			ArrayList<Object> annotations = (ArrayList<Object>) jsonResponse.get("annotations");
-			HashMap<String, ArrayList<String>> annotationsOfRequirements = new HashMap<String, ArrayList<String>>();
-			for (Object annotation : annotations) {
-				HashMap annotationobject = (HashMap) annotation;
-				String id = (String) annotationobject.get("id");
-				ArrayList<Object> annForId = (ArrayList<Object>) annotationobject.get("annotation");
-				ArrayList<String> annotationsForId = new ArrayList<String>();
-				for (Object annForIdk : annForId) {
-					annotationsForId.add((String) annForIdk);
-				}
-				annotationsOfRequirements.put(id, annotationsForId);
-			}
-
-			ArrayList<String> annotationsString = new ArrayList<String>();
-			for (int i = 1; i < totalRequirements + 1; i++) {
-				String id = "FR" + i;
-				String finalAnnotationsString = "";
-				for (String annotation : annotationsOfRequirements.get(id)) {
-					if (annotation.startsWith("T")) {
-						String[] splitAnnotation = annotation.split(" ");
-						String newid = i + ":T" + splitAnnotation[0].substring(1);
-						String newtype = splitAnnotation[1].equals("Theme") ? "Object" : splitAnnotation[1];
-						String word = requirements.get(i - 1).substring(Integer.parseInt(splitAnnotation[2]),
-								Integer.parseInt(splitAnnotation[3]));
-						annotation = newid + "\\t" + newtype + " " + splitAnnotation[2] + " " + splitAnnotation[3]
-								+ "\\t" + word;
-					} else if (annotation.startsWith("R")) {
-						String[] splitAnnotation = annotation.split(" ");
-						String newleftlimit = i + ":T" + splitAnnotation[2].split(":")[1].substring(1);
-						String newrightlimit = i + ":T" + splitAnnotation[3].split(":")[1].substring(1);
-						String newid = i + ":R" + splitAnnotation[0].substring(1);
-						annotation = newid + "\\t" + splitAnnotation[1] + " " + newleftlimit + " " + newrightlimit;
-					}
-					finalAnnotationsString += annotation + "\\n";
-				}
-				annotationsString.add(finalAnnotationsString);
-			}
-			return annotationsString;
-		} else
-			return null;
-	}
-
-	/**
-	 * This is a test function that receives an sbd file and automatically annotates it. The path to the sbd file must
-	 * be given as an argument (e.g. "path/to/new_file.sbd")
+	 * This is a test function that receives an sbd file and automatically annotates it. The path to the uml file must
+	 * be given as an argument (e.g. "path/to/new_file.uml")
 	 * 
 	 * @param args the arguments given to this function, the first and only argument is the path to the sbd file.
 	 */
 	public static void main(String[] args) {
 		String sbdfilename = args[0];
 		File file = new File(sbdfilename);
-		ArrayList<String> requirements = SBDHelpers.getRequirements(file);
-		ArrayList<String> finalAnnotationsString = AutoAnnotateSBDHandler.getAnnotationsForRequirements(requirements);
+		ArrayList<String> requirements = UMLHelpers.getRequirements(file);
+		ArrayList<String> finalAnnotationsString = AutoAnnotateUMLHandler.getAnnotationsForRequirements(requirements);
 		for (String annotations : finalAnnotationsString) {
 			System.out.println(annotations);
 		}
