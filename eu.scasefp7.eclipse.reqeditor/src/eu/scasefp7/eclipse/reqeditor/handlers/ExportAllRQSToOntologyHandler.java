@@ -13,11 +13,16 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 
+/**
+ * A command handler for exporting all the annotated instances of all RQS files to the static ontology.
+ * 
+ * @author themis
+ */
 public class ExportAllRQSToOntologyHandler extends ExportToOntologyHandler {
 
 	/**
 	 * This function is called when the user selects the menu item. It reads the selected resource(s) and populates the
-	 * dynamic ontology.
+	 * static ontology.
 	 * 
 	 * @param event the event containing the information about which file was selected.
 	 * @return the result of the execution which must be {@code null}.

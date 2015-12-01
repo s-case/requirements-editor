@@ -11,6 +11,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * Project aware handler for receiving the current project.
+ * 
+ * @author themis
+ */
 public abstract class ProjectAwareHandler extends AbstractHandler {
 
 	/**
@@ -42,6 +47,13 @@ public abstract class ProjectAwareHandler extends AbstractHandler {
 		return project;
 	}
 
+	/**
+	 * Finds the files of a container recursively.
+	 * 
+	 * @param container a workspace container (e.g. project or folder).
+	 * @param files a list of files that is populated.
+	 * @param extension the extension of the files that are to be retrieved.
+	 */
 	private void processContainer(IContainer container, ArrayList<IFile> files, String extension) {
 		try {
 			IResource[] members = container.members();
@@ -58,6 +70,13 @@ public abstract class ProjectAwareHandler extends AbstractHandler {
 		}
 	}
 
+	/**
+	 * Returns the files of the given project.
+	 * 
+	 * @param project the project of which the files are returned.
+	 * @param extension the extension of the returned files.
+	 * @return a list of the files of the project with the given extension.
+	 */
 	protected ArrayList<IFile> getFilesOfProject(IProject project, String extension) {
 		ArrayList<IFile> files = new ArrayList<IFile>();
 		processContainer(project, files, extension);
