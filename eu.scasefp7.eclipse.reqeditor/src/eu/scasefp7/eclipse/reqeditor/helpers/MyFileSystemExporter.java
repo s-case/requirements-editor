@@ -13,8 +13,9 @@ import java.util.Scanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExporter;
+
+import eu.scasefp7.eclipse.reqeditor.Activator;
 
 /**
  * Extends the {@link FileSystemExporter} class in order to write two files (a txt and an ann one) in the selected
@@ -84,7 +85,7 @@ public class MyFileSystemExporter extends FileSystemExporter {
 				try {
 					contentStream.close();
 				} catch (IOException e) {
-					IDEWorkbenchPlugin.log("Error closing input stream for file: " + destinationPath, e); //$NON-NLS-1$
+					Activator.log("Error closing input stream in file system exporter", e); //$NON-NLS-1$
 				}
 			}
 			if (output != null) {
@@ -105,15 +106,11 @@ public class MyFileSystemExporter extends FileSystemExporter {
 			super.writeFile(file, destinationPath);
 		else {
 			String RQS = "";
-			try {
-				Scanner scanner = new Scanner(file.getContents(), "UTF-8");
-				while (scanner.hasNextLine()) {
-					RQS += scanner.nextLine() + "\n";
-				}
-				scanner.close();
-			} catch (CoreException e) {
-				e.printStackTrace();
+			Scanner scanner = new Scanner(file.getContents(), "UTF-8");
+			while (scanner.hasNextLine()) {
+				RQS += scanner.nextLine() + "\n";
 			}
+			scanner.close();
 			String[] txtandann = RQStoANNHelpers.transformRQStoTXTandANN(RQS);
 			if (exportTxt)
 				writeString(txtandann[0], destinationPath.removeFileExtension().addFileExtension("txt"));

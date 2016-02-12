@@ -11,6 +11,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
+
 /**
  * Project aware handler for receiving the current project.
  * 
@@ -66,7 +68,7 @@ public abstract class ProjectAwareHandler extends AbstractHandler {
 				}
 			}
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.log("Error finding the files of a project", e);
 		}
 	}
 

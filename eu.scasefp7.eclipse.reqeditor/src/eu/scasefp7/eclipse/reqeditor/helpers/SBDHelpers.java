@@ -21,6 +21,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
+
 /**
  * Class including helper functions for extracting requirements from sbd files.
  * 
@@ -39,7 +41,7 @@ public class SBDHelpers {
 		try {
 			requirements = getRequirements(file.getContents());
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements of sbd file", e);
 		}
 		return requirements;
 	}
@@ -68,7 +70,7 @@ public class SBDHelpers {
 			InputStream filestream = new FileInputStream(file);
 			requirements = getRequirements(filestream);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements of sbd file", e);
 		}
 		return requirements;
 	}
@@ -99,7 +101,7 @@ public class SBDHelpers {
 				}
 			}
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements of sbd file", e);
 		}
 
 		return requirements;

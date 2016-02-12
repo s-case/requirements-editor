@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.SBDHelpers;
 
 /**
@@ -121,7 +122,7 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 									});
 								} catch (TransformerException | ParserConfigurationException | SAXException
 										| IOException | CoreException e) {
-									e.printStackTrace();
+									Activator.log("Error reading or writing annotations in storyboard", e);
 								}
 							} else {
 								return Status.CANCEL_STATUS;

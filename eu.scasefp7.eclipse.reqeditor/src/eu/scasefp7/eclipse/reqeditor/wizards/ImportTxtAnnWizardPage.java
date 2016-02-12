@@ -26,13 +26,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImportPage1;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQStoANNHelpers;
 
 /**
@@ -72,9 +72,9 @@ public class ImportTxtAnnWizardPage extends WizardFileSystemResourceImportPage1 
 			}
 			brlocal.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Activator.log("Error when reading a txt/ann from the file system to import it", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Activator.log("Error when reading a txt/ann from the file system to import it", e);
 		}
 		String filedata = "";
 		for (String dataline : datalines) {
@@ -167,17 +167,10 @@ public class ImportTxtAnnWizardPage extends WizardFileSystemResourceImportPage1 
 			try {
 				getContainer().run(false, true, op);
 			} catch (InterruptedException e) {
+				Activator.log("Error importing a txt and/or an ann file", e);
 				return false;
 			} catch (InvocationTargetException e) {
-				if (e.getTargetException() instanceof CoreException) {
-					ErrorDialog.openError(getContainer().getShell(), "Error in file creation", null,
-							((CoreException) e.getTargetException()).getStatus());
-					System.out.println("Error in file creation");
-					e.printStackTrace();
-				} else {
-					System.out.println("Error creating file");
-					e.printStackTrace();
-				}
+				Activator.log("Error importing a txt and/or an ann file", e);
 				return false;
 			}
 		}

@@ -9,7 +9,6 @@ import org.eclipse.jface.operation.*;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -76,10 +75,10 @@ public class CreateRqsWizard extends Wizard implements INewWizard {
 		try {
 			getContainer().run(true, false, op);
 		} catch (InterruptedException e) {
+			Activator.log("Error creating or opening of a new rqs file", e);
 			return false;
 		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
+			Activator.log("Error creating or opening of a new rqs file", e);
 			return false;
 		}
 		return true;
@@ -115,6 +114,7 @@ public class CreateRqsWizard extends Wizard implements INewWizard {
 			}
 			stream.close();
 		} catch (IOException e) {
+			Activator.log("Error creating a new rqs file", e);
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
@@ -124,6 +124,7 @@ public class CreateRqsWizard extends Wizard implements INewWizard {
 				try {
 					IDE.openEditor(page, file, true);
 				} catch (PartInitException e) {
+					Activator.log("Error opening the newly created rqs file", e);
 				}
 			}
 		});

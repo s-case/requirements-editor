@@ -8,6 +8,8 @@ import java.util.Scanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
+
 /**
  * Class including helper functions for extracting requirements and annotations from rqs files.
  * 
@@ -65,7 +67,7 @@ public class RQSHelpers {
 				annotationsString += annotation + "\n";
 			}
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements and annotations of rqs file", e);
 		}
 		txtandann[0] = requirementsString;
 		txtandann[1] = annotationsString;
@@ -85,7 +87,7 @@ public class RQSHelpers {
 			requirements = getRequirements(scanner);
 			scanner.close();
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements of rqs file", e);
 		}
 		return requirements;
 	}
@@ -116,7 +118,7 @@ public class RQSHelpers {
 			requirements = getRequirements(scanner);
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements of rqs file", e);
 		}
 		return requirements;
 	}
@@ -159,7 +161,7 @@ public class RQSHelpers {
 			annotations = getAnnotations(scanner);
 			scanner.close();
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.log("Error reading annotations of rqs file", e);
 		}
 		return annotations;
 	}
@@ -190,7 +192,7 @@ public class RQSHelpers {
 			annotations = getAnnotations(scanner);
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Activator.log("Error reading annotations of rqs file", e);
 		}
 		return annotations;
 	}

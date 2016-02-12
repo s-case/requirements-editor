@@ -20,6 +20,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.MyProgressMonitor;
 
 /**
@@ -85,6 +86,7 @@ public class SBDPhrasesReader extends RequirementsReader {
 				}
 			}
 		} catch (ParserConfigurationException | SAXException | IOException e) {
+			Activator.log("Error reading requirements and annotations from stream", e);
 			e.printStackTrace();
 		}
 	}
@@ -128,7 +130,7 @@ public class SBDPhrasesReader extends RequirementsReader {
 				editor.doSave(new MyProgressMonitor());
 			}
 		} catch (TransformerException e) {
-			e.printStackTrace();
+			Activator.log("Error updating the annotations of an sbd file", e);
 		}
 	}
 

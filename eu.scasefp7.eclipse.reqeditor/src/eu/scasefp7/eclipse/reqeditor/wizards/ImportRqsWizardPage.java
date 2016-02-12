@@ -27,13 +27,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImportPage1;
 import org.eclipse.ui.part.FileEditorInput;
+
+import eu.scasefp7.eclipse.reqeditor.Activator;
 
 /**
  * The "Import" wizard page that allows importing rqs files.
@@ -98,9 +99,9 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 						}
 						brlocal.close();
 					} catch (FileNotFoundException e) {
-						e.printStackTrace();
+						Activator.log("Error when reading an rqs from the file system to import it", e);
 					} catch (IOException e) {
-						e.printStackTrace();
+						Activator.log("Error when reading an rqs from the file system to import it", e);
 					}
 					String filedata = "";
 					for (String dataline : datalines) {
@@ -121,15 +122,10 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 			try {
 				getContainer().run(false, true, op);
 			} catch (InterruptedException e) {
+				Activator.log("Error importing an rqs file", e);
 				return false;
 			} catch (InvocationTargetException e) {
-				if (e.getTargetException() instanceof CoreException) {
-					ErrorDialog.openError(getContainer().getShell(), "Error in file creation", null,
-							((CoreException) e.getTargetException()).getStatus());
-					System.out.println("Error in file creation");
-				} else {
-					System.out.println("Error creating file");
-				}
+				Activator.log("Error importing an rqs file", e);
 				return false;
 			}
 		}

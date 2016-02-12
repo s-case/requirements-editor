@@ -21,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.MyProgressMonitor;
 
 /**
@@ -88,7 +89,7 @@ public class UMLPhrasesReader extends RequirementsReader {
 				}
 			}
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
+			Activator.log("Error reading requirements and annotations from stream", e);
 		}
 	}
 
@@ -133,7 +134,7 @@ public class UMLPhrasesReader extends RequirementsReader {
 				editor.doSave(new MyProgressMonitor());
 			}
 		} catch (TransformerException e) {
-			e.printStackTrace();
+			Activator.log("Error updating the annotations of a UML diagram file", e);
 		}
 	}
 

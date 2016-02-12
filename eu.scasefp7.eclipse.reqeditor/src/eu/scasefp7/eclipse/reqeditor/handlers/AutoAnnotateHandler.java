@@ -28,6 +28,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
 
 /**
@@ -213,9 +214,9 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 			}
 			br.close();
 		} catch (ConnectException e) {
-
+			Activator.log("Error connecting to NLP server", e);
 		} catch (IOException e) {
-
+			Activator.log("Error reading response of NLP server", e);
 		}
 		return response;
 	}
@@ -231,6 +232,7 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 		try {
 			return parser.parse(json);
 		} catch (ParseException pe) {
+			Activator.log("Error reading JSON response of NLP server", pe);
 			throw new RuntimeException("Invalid json", pe);
 		}
 	}

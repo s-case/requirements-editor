@@ -17,6 +17,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
+
 /**
  * A command handler for annotating the action instances of a storyboard diagram.
  * 
@@ -64,7 +66,7 @@ public class AnnotateSBDDiagramInstancesHandler extends AbstractHandler {
 		try {
 			page.openEditor(new FileEditorInput(file), desc.getId());
 		} catch (PartInitException e) {
-			e.printStackTrace();
+			Activator.log("Error opening requirements editor", e);
 		}
 	}
 

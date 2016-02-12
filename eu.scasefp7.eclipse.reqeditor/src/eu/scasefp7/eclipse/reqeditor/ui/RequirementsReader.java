@@ -17,6 +17,7 @@ import java.util.Scanner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.editors.text.TextEditor;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.MyProgressMonitor;
 import eu.scasefp7.eclipse.reqeditor.ui.annotationseditor.IdHashMap;
 
@@ -162,7 +163,7 @@ public class RequirementsReader {
 			try {
 				editor.getDocumentProvider().resetDocument(editor.getEditorInput());
 			} catch (CoreException e) {
-				e.printStackTrace();
+				Activator.log("Error in resetting the editor", e);
 			}
 
 			InputStream stringstream = new ByteArrayInputStream(editor.getDocumentProvider()

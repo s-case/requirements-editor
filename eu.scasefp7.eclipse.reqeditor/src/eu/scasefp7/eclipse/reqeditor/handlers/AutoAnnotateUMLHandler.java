@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.UMLHelpers;
 
 /**
@@ -125,7 +126,7 @@ public class AutoAnnotateUMLHandler extends AutoAnnotateSBDHandler {
 									});
 								} catch (TransformerException | ParserConfigurationException | SAXException
 										| IOException | CoreException e) {
-									e.printStackTrace();
+									Activator.log("Error reading or writing annotations in UML diagram", e);
 								}
 							} else {
 								return Status.CANCEL_STATUS;

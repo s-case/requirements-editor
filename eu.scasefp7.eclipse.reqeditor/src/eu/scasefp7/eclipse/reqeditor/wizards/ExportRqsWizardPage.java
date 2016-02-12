@@ -17,6 +17,8 @@ import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
 import org.eclipse.ui.internal.wizards.datatransfer.IDataTransferHelpContextIds;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
+
 /**
  * The "Export" wizard page that allows exporting rqs files.
  * 
@@ -98,9 +100,11 @@ public class ExportRqsWizardPage extends WizardFileSystemResourceExportPage1 {
 		try {
 			getContainer().run(true, true, op);
 		} catch (InterruptedException e) {
+			Activator.log("Error exporting an rqs file", e);
 			return false;
 		} catch (InvocationTargetException e) {
-			displayErrorDialog(e.getTargetException());
+			Activator.log("Error exporting an rqs file", e);
+			// displayErrorDialog(e.getTargetException());
 			return false;
 		}
 

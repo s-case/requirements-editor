@@ -50,6 +50,7 @@ public class ButtonArea extends Composite {
 				}
 			}
 		} catch (MalformedURLException e) {
+			Activator.log("Error loading plugin images", e);
 		}
 	}
 

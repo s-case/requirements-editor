@@ -15,6 +15,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.editors.MyReqEditor;
 import eu.scasefp7.eclipse.reqeditor.helpers.MyProgressMonitor;
 
@@ -36,7 +37,7 @@ public abstract class EditorAwareHandler extends AbstractHandler {
 		try {
 			file.setContents(stream, IFile.FORCE, new MyProgressMonitor());
 		} catch (CoreException e) {
-			e.printStackTrace();
+			Activator.log("Error writing string to file", e);
 		}
 	}
 

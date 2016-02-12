@@ -30,6 +30,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
+
 /**
  * A command handler for deleting all the annotations of a uml file.
  * 
@@ -95,7 +97,7 @@ public class ClearAllAnnotationsUMLHandler extends EditorAwareHandler {
 						});
 					} catch (TransformerException | ParserConfigurationException | SAXException | IOException
 							| CoreException e) {
-						e.printStackTrace();
+						Activator.log("Error reading or removing annotations of UML diagram", e);
 					}
 				}
 			}

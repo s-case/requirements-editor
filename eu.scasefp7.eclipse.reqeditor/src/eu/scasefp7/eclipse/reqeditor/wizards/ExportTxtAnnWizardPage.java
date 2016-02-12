@@ -20,6 +20,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
 import org.eclipse.ui.internal.wizards.datatransfer.IDataTransferHelpContextIds;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.MyFileSystemExporter;
 
 /**
@@ -138,15 +139,17 @@ public class ExportTxtAnnWizardPage extends WizardFileSystemResourceExportPage1 
 			exporter.setAccessible(true);
 			exporter.set(op, new MyFileSystemExporter(exportTxt, exportAnn));
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+			Activator.log("There is a problem with the files system exporter for txt and ann files", e);
 		}
 
 		try {
 			getContainer().run(true, true, op);
 		} catch (InterruptedException e) {
+			Activator.log("Error exporting a txt and/or an ann file", e);
 			return false;
 		} catch (InvocationTargetException e) {
-			displayErrorDialog(e.getTargetException());
+			Activator.log("Error exporting a txt and/or an ann file", e);
+			// displayErrorDialog(e.getTargetException());
 			return false;
 		}
 

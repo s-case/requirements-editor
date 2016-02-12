@@ -17,6 +17,7 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 
+import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.ui.RequirementsReader;
 import eu.scasefp7.eclipse.reqeditor.ui.SBDPhrasesReader;
 import eu.scasefp7.eclipse.reqeditor.ui.UMLPhrasesReader;
@@ -79,6 +80,7 @@ public class MyReqEditor extends MultiPageEditorPart implements IResourceChangeL
 			setPartName(getEditorInput().getName());
 		} catch (PartInitException e) {
 			ErrorDialog.openError(getSite().getShell(), "Error creating nested text editor", null, e.getStatus());
+			Activator.log("Error creating nested text editor", e);
 		}
 	}
 
