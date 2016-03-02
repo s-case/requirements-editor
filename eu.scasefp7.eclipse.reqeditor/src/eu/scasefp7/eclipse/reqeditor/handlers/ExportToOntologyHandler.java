@@ -63,7 +63,7 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 		for (int i = 1; i < requirements.size() + 1; i++) {
 			// Add a new requirement
 			String reqId = "FR" + i;
-			ontology.addRequirement(reqId);
+			ontology.addRequirement(reqId, requirements.get(i - 1));
 
 			HashMap<String, String> idmap = new HashMap<String, String>();
 			for (String annotation : annotations) {
