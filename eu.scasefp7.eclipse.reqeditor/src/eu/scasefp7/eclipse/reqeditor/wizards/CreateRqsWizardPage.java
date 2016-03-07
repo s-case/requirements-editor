@@ -1,6 +1,7 @@
 package eu.scasefp7.eclipse.reqeditor.wizards;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -108,11 +109,14 @@ public class CreateRqsWizardPage extends WizardPage {
 				return;
 			Object obj = ssel.getFirstElement();
 			if (obj instanceof IResource) {
-				IContainer container;
+				IProject project;
 				if (obj instanceof IContainer)
-					container = (IContainer) obj;
+					project = ((IContainer) obj).getProject();
 				else
-					container = ((IResource) obj).getParent();
+					project = (((IResource) obj).getParent()).getProject();
+				IContainer container = project.getFolder("requirements");
+				if (!container.exists())
+					container = project;
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
@@ -170,7 +174,8 @@ public class CreateRqsWizardPage extends WizardPage {
 			setErrorMessage("File name already exists");
 			setPageComplete(false);
 			return;
-		};
+		}
+		;
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);

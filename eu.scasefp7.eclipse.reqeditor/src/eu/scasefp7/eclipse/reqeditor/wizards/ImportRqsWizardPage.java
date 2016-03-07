@@ -21,12 +21,15 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -54,6 +57,23 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 		super(workbench, selection);
 		setTitle("Requirements Editor Import Wizard");
 		setDescription("Select your requirements file to import");
+		if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (ssel.size() > 1)
+				return;
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof IResource) {
+				IProject project;
+				if (obj instanceof IContainer)
+					project = ((IContainer) obj).getProject();
+				else
+					project = (((IResource) obj).getParent()).getProject();
+				IContainer container = project.getFolder("requirements");
+				if (!container.exists())
+					container = project;
+				setContainerFieldValue(container.getFullPath().toString());
+			}
+		}
 	}
 
 	/**
@@ -110,13 +130,13 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 					InputStream stream = new ByteArrayInputStream(filedata.getBytes(StandardCharsets.UTF_8));
 					IPath resourcePath = getResourcePath();
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-					IProject project = root.getProject(resourcePath.toString());
-					project.getFile(fileName).create(stream, true, monitor);
+					IContainer container = (IContainer) root.findMember(resourcePath);
+					container.getFile(new Path(fileName)).create(stream, true, monitor);
 
 					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
 							.getDefaultEditor(file.getName());
 					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					page.openEditor(new FileEditorInput(project.getFile(fileName)), desc.getId());
+					page.openEditor(new FileEditorInput(container.getFile(new Path(fileName))), desc.getId());
 				}
 			};
 			try {
