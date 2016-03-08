@@ -3,8 +3,11 @@ package eu.scasefp7.eclipse.reqeditor.wizards;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -20,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+
+import eu.scasefp7.eclipse.reqeditor.Activator;
 
 /**
  * The "New" wizard page that allows setting the container for the new file as well as the file name.
@@ -114,9 +119,19 @@ public class CreateRqsWizardPage extends WizardPage {
 					project = ((IContainer) obj).getProject();
 				else
 					project = (((IResource) obj).getParent()).getProject();
-				IContainer container = project.getFolder("requirements");
-				if (!container.exists())
-					container = project;
+				String requirementsFolderLocation = null;
+				try {
+					requirementsFolderLocation = project.getPersistentProperty(new QualifiedName("",
+							"eu.scasefp7.eclipse.core.ui.rqsFolder"));
+				} catch (CoreException e) {
+					Activator.log("Error retrieving project property (requirements folder location)", e);
+				}
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IContainer container = project;
+				if (requirementsFolderLocation != null) {
+					if (root.findMember(new Path(requirementsFolderLocation)).exists())
+						container = (IContainer) root.findMember(new Path(requirementsFolderLocation));
+				}
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
