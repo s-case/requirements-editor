@@ -21,18 +21,18 @@ import eu.scasefp7.eclipse.reqeditor.Activator;
 public abstract class ProjectAwareHandler extends AbstractHandler {
 
 	/**
-	 * Returns the project that the selected file(s) belong to.
+	 * Returns the project that the selected resource(s) belong to.
 	 * 
-	 * @param selectionList the selected file(s).
-	 * @return the project that the selected file(s) belong to.
+	 * @param selectionList the selected resource(s).
+	 * @return the project that the selected resource(s) belong to.
 	 */
 	protected IProject getProjectOfSelectionList(List<Object> selectionList) {
 		IProject project = null;
 		for (Object object : selectionList) {
-			IFile file = (IFile) Platform.getAdapterManager().getAdapter(object, IFile.class);
+			IResource resource = (IResource) Platform.getAdapterManager().getAdapter(object, IResource.class);
 			IProject theproject = null;
-			if (file != null) {
-				theproject = file.getProject();
+			if (resource != null) {
+				theproject = resource.getProject();
 			} else {
 				theproject = (IProject) Platform.getAdapterManager().getAdapter(object, IProject.class);
 			}
