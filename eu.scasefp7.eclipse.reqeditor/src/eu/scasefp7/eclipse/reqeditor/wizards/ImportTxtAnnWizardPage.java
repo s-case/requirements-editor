@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -41,6 +40,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImpo
 import org.eclipse.ui.part.FileEditorInput;
 
 import eu.scasefp7.eclipse.reqeditor.Activator;
+import eu.scasefp7.eclipse.reqeditor.helpers.ProjectLocator;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQStoANNHelpers;
 
 /**
@@ -62,31 +62,20 @@ public class ImportTxtAnnWizardPage extends WizardFileSystemResourceImportPage1 
 		setTitle("Requirements Editor Import Wizard");
 		setDescription("Select your txt/ann files to import");
 		if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
-			Object obj = ssel.getFirstElement();
-			if (obj instanceof IResource) {
-				IProject project;
-				if (obj instanceof IContainer)
-					project = ((IContainer) obj).getProject();
-				else
-					project = (((IResource) obj).getParent()).getProject();
-				String requirementsFolderLocation = null;
-				try {
-					requirementsFolderLocation = project.getPersistentProperty(new QualifiedName("",
-							"eu.scasefp7.eclipse.core.ui.rqsFolder"));
-				} catch (CoreException e) {
-					Activator.log("Error retrieving project property (requirements folder location)", e);
-				}
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IContainer container = project;
-				if (requirementsFolderLocation != null) {
-					if (root.findMember(new Path(requirementsFolderLocation)).exists())
-						container = (IContainer) root.findMember(new Path(requirementsFolderLocation));
-				}
-				setContainerFieldValue(container.getFullPath().toString());
+			IProject project = ProjectLocator.getProjectOfSelectionList((IStructuredSelection) selection);
+			String requirementsFolderLocation = null;
+			try {
+				requirementsFolderLocation = project.getPersistentProperty(new QualifiedName("",
+						"eu.scasefp7.eclipse.core.ui.rqsFolder"));
+			} catch (CoreException e) {
+				Activator.log("Error retrieving project property (requirements folder location)", e);
 			}
+			IContainer container = project;
+			if (requirementsFolderLocation != null) {
+				if (project.findMember(new Path(requirementsFolderLocation)).exists())
+					container = (IContainer) project.findMember(new Path(requirementsFolderLocation));
+			}
+			setContainerFieldValue(container.getFullPath().toString());
 		}
 	}
 
