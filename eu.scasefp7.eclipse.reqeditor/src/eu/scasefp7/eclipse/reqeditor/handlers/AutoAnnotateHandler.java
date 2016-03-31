@@ -41,7 +41,7 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 	/**
 	 * The address of the NLP Server.
 	 */
-	private static final String NLPServerAddress = "http://nlp.scasefp7.eu:8010/nlpserver/project";
+	private static final String NLPServerAddress = "http://nlp.scasefp7.eu:8010/nlpserver/project2";
 
 	/**
 	 * This function is called when the user selects the menu item. It reads the selected resource(s) and automatically
