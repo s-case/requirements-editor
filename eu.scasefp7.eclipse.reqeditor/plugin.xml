@@ -16,13 +16,13 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            name="Requirements Editor"
-            id="ReqEditor">
+            id="eu.scasefp7.eclipse.category"
+            name="S-CASE">
       </category>
       <wizard
             name="Requirements Editor file"
             icon="icons/sample.gif"
-            category="ReqEditor"
+            category="eu.scasefp7.eclipse.category"
             class="eu.scasefp7.eclipse.reqeditor.wizards.CreateRqsWizard"
             id="eu.scasefp7.eclipse.reqeditor.wizards.CreateRqsWizard">
             <description>Create a Requirements Editor file</description>
@@ -32,13 +32,13 @@
    <extension 
        point="org.eclipse.ui.exportWizards"> 
       <category
-            name="Requirements Editor"
-            id="ReqEditor">
+            id="eu.scasefp7.eclipse.category"
+            name="S-CASE">
       </category>
       <wizard 
          name="Export requirements in rqs format" 
          icon="icons/sample.gif"
-         category="ReqEditor"
+         category="eu.scasefp7.eclipse.category"
          class="eu.scasefp7.eclipse.reqeditor.wizards.ExportRqsWizard"
          id="eu.scasefp7.eclipse.reqeditor.wizards.ExportRqsWizard">
          <description>Export a Requirements Editor file in rqs format</description>
@@ -48,13 +48,13 @@
    <extension 
        point="org.eclipse.ui.exportWizards"> 
       <category
-            name="Requirements Editor"
-            id="ReqEditor">
+            id="eu.scasefp7.eclipse.category"
+            name="S-CASE">
       </category>
       <wizard 
          name="Export requirements in txt/ann format" 
          icon="icons/sample.gif"
-         category="ReqEditor"
+         category="eu.scasefp7.eclipse.category"
          class="eu.scasefp7.eclipse.reqeditor.wizards.ExportTxtAnnWizard"
          id="eu.scasefp7.eclipse.reqeditor.wizards.ExportTxtAnnWizard">
          <description>Export a Requirements Editor file in txt/ann format</description>
@@ -64,13 +64,13 @@
    <extension 
        point="org.eclipse.ui.importWizards"> 
       <category
-            name="Requirements Editor"
-            id="ReqEditor">
+            id="eu.scasefp7.eclipse.category"
+            name="S-CASE">
       </category>
       <wizard 
          name="Import requirements from rqs format" 
          icon="icons/sample.gif"
-         category="ReqEditor"
+         category="eu.scasefp7.eclipse.category"
          class="eu.scasefp7.eclipse.reqeditor.wizards.ImportRqsWizard"
          id="eu.scasefp7.eclipse.reqeditor.wizards.ImportRqsWizard">
          <description>Import a Requirements Editor file from rqs format</description>
@@ -80,13 +80,13 @@
    <extension 
        point="org.eclipse.ui.importWizards"> 
       <category
-            name="Requirements Editor"
-            id="ReqEditor">
+            id="eu.scasefp7.eclipse.category"
+            name="S-CASE">
       </category>
       <wizard 
          name="Import requirements from txt/ann format" 
          icon="icons/sample.gif"
-         category="ReqEditor"
+         category="eu.scasefp7.eclipse.category"
          class="eu.scasefp7.eclipse.reqeditor.wizards.ImportTxtAnnWizard"
          id="eu.scasefp7.eclipse.reqeditor.wizards.ImportTxtAnnWizard">
          <description>Import a Requirements Editor file from txt/ann format</description>
