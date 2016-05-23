@@ -166,10 +166,17 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 				for (String annotation : annotationsOfRequirements.get(id)) {
 					if (annotation.startsWith("T")) {
 						String[] splitAnnotation = annotation.split(" ");
+						StringBuilder builder = new StringBuilder();
+						for (int k = 4; k < splitAnnotation.length; k++) {
+							if (k > 4)
+								builder.append(" ");
+							builder.append(splitAnnotation[k]);
+						}
+						String annotatedPhrase = builder.toString();
 						String newid = i + ":T" + splitAnnotation[0].substring(1);
 						String newtype = splitAnnotation[1].equals("Theme") ? "Object" : splitAnnotation[1];
 						annotation = newid + "\t" + newtype + " " + splitAnnotation[2] + " " + splitAnnotation[3]
-								+ "\t" + splitAnnotation[4];
+								+ "\t" + annotatedPhrase;
 					} else if (annotation.startsWith("R")) {
 						String[] splitAnnotation = annotation.split(" ");
 						String newleftlimit = i + ":T" + splitAnnotation[2].split(":")[1].substring(1);
