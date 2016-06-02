@@ -154,9 +154,9 @@ public class AnnotatedText extends StyledTextWithListeners {
 						int rightX = leftX + annotationWidth;
 						int upperY = ytop;
 						int lowerY = ytop - ywidth;
-						if (leftX <= 0) {
-							rightX -= leftX - 1;
-							leftX = 1;
+						if (annotation.annLimits.left == 0 && wordWidth < annotationWidth) {
+							leftX += 3 + Math.floor((double) (annotationWidth - wordWidth) / 2.0);
+							rightX = leftX + annotationWidth;
 						}
 						annotation.setRectangleLimits(leftX - 1, upperY, rightX - leftX + 1, upperY - lowerY);
 						event.gc.setFont(textfont);
