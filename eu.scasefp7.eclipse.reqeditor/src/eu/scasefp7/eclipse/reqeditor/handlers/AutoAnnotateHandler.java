@@ -41,8 +41,9 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 	/**
 	 * The address of the NLP Server.
 	 */
-	private static final String NLPServerRootAddress = Platform.getPreferencesService().getString(
-			"eu.scasefp7.eclipse.core.ui", "nlpServiceURI", "http://nlp.scasefp7.eu:8010/", null);
+	private static final String NLPServerRootAddress = Platform.getPreferencesService() != null ? Platform
+			.getPreferencesService().getString("eu.scasefp7.eclipse.core.ui", "nlpServiceURI",
+					"http://nlp.scasefp7.eu:8010/", null) : "http://nlp.scasefp7.eu:8010/";
 	private static final String NLPServerAddress = NLPServerRootAddress + "nlpserver/project";
 
 	/**
