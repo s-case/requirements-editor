@@ -309,5 +309,20 @@
       <initializer class="eu.scasefp7.eclipse.reqeditor.preferences.DefaultPreferencesInitializer">
       </initializer>
    </extension>
+   <extension
+         point="eu.scasefp7.eclipse.core.ui.dashboardItem">
+         <group
+               id="eu.scasefp7.eclipse.core.ui.dashboard.groups.design"
+               appearsBefore="eu.scasefp7.eclipse.core.ui.dashboard.groups.mashup"
+               name="Design" />
+         <command
+              buttonId="eu.scasefp7.eclipse.reqeditor.dashboard.buttons.createrqs"
+              commandId="org.eclipse.ui.newWizard"
+              groupId="eu.scasefp7.eclipse.core.ui.dashboard.groups.design"
+              label="Create requirements"
+              tooltip="Create a new textual requirements collection">
+              <parameter name="newWizardId" value="eu.scasefp7.eclipse.reqeditor.wizards.CreateRqsWizard" />
+        </command>
+   </extension>
 
 </plugin>
