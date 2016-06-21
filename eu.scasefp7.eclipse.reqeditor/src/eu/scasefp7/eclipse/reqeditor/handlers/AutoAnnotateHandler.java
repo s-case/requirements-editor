@@ -1,13 +1,6 @@
 package eu.scasefp7.eclipse.reqeditor.handlers;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.ConnectException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +22,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import eu.scasefp7.eclipse.reqeditor.Activator;
+import eu.scasefp7.eclipse.reqeditor.helpers.NLPClientHelper;
 import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
 
 /**
@@ -37,14 +31,6 @@ import eu.scasefp7.eclipse.reqeditor.helpers.RQSHelpers;
  * @author themis
  */
 public class AutoAnnotateHandler extends EditorAwareHandler {
-
-	/**
-	 * The address of the NLP Server.
-	 */
-	private static final String NLPServerRootAddress = Platform.getPreferencesService() != null ? Platform
-			.getPreferencesService().getString("eu.scasefp7.eclipse.core.ui", "nlpServiceURI",
-					"http://nlp.scasefp7.eu:8010/", null) : "http://nlp.scasefp7.eu:8010/";
-	private static final String NLPServerAddress = NLPServerRootAddress + "nlpserver/project";
 
 	/**
 	 * This function is called when the user selects the menu item. It reads the selected resource(s) and automatically
@@ -202,33 +188,7 @@ public class AutoAnnotateHandler extends EditorAwareHandler {
 	 * @return the JSON response of the request.
 	 */
 	protected static String makeRestRequest(String query) {
-		String response = null;
-		try {
-			URL url = new URL(NLPServerAddress);
-			// Open POST connection
-			URLConnection urlc = url.openConnection();
-			urlc.setRequestProperty("Content-Type", "application/json");
-			urlc.setDoOutput(true);
-			urlc.setAllowUserInteraction(false);
-
-			// Send query
-			PrintStream ps = new PrintStream(urlc.getOutputStream(), false, "UTF-8");
-			ps.print(query);
-			ps.close();
-
-			// Get result
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream(), "UTF-8"));
-			String l = null;
-			while ((l = br.readLine()) != null) {
-				response = l;
-			}
-			br.close();
-		} catch (ConnectException e) {
-			Activator.log("Error connecting to NLP server", e);
-		} catch (IOException e) {
-			Activator.log("Error reading response of NLP server", e);
-		}
-		return response;
+		return NLPClientHelper.makeRestRequest(query);
 	}
 
 	/**
