@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -69,8 +70,9 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 			}
 			IContainer container = project;
 			if (requirementsFolderLocation != null) {
-				if (project.findMember(new Path(requirementsFolderLocation)).exists())
-					container = (IContainer) project.findMember(new Path(requirementsFolderLocation));
+			    IResource requirementsFolder = project.findMember(new Path(requirementsFolderLocation)); 
+				if (requirementsFolder != null && requirementsFolder.exists())
+					container = (IContainer) requirementsFolder;
 			}
 			setContainerFieldValue(container.getFullPath().toString());
 		}

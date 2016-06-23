@@ -119,8 +119,9 @@ public class CreateRqsWizardPage extends WizardPage {
 			}
 			IContainer container = project;
 			if (requirementsFolderLocation != null) {
-				if (project.findMember(new Path(requirementsFolderLocation)).exists())
-					container = (IContainer) project.findMember(new Path(requirementsFolderLocation));
+			    IResource requirementsFolder = project.findMember(new Path(requirementsFolderLocation)); 
+				if (requirementsFolder != null && requirementsFolder.exists())
+					container = (IContainer) requirementsFolder;
 			}
 			containerText.setText(container.getFullPath().toString());
 		}
