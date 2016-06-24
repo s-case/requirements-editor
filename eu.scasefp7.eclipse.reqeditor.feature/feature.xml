@@ -207,7 +207,7 @@ project S-CASE
    </license>
 
    <url>
-      <update label="S-CASE update site" url="http://s-case.github.io/s-case_update_site/"/>
+      <update label="S-CASE update site" url="https://eclipse.scasefp7.com/eclipse/s-case_update_site/"/>
    </url>
 
    <plugin
