@@ -23,7 +23,6 @@ import eu.scasefp7.eclipse.reqeditor.ui.ButtonWithListeners;
  * 
  * @author themis
  */
-@SuppressWarnings("deprecation")
 public class ButtonArea extends Composite {
 
 	/**
@@ -44,7 +43,7 @@ public class ButtonArea extends Composite {
 			for (String imageName : imageNames) {
 				URL url = null;
 				if (Activator.getDefault() != null) {
-					url = new URL(Activator.getDefault().getDescriptor().getInstallURL(), "icons/" + imageName + ".gif");
+					url = new URL(Activator.getDefault().getBundle().getEntry("/"), "icons/" + imageName + ".gif");
 					ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(url);
 					images.put(imageName, imageDescriptor.createImage());
 				}
