@@ -12,6 +12,9 @@ import java.util.HashMap;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -46,24 +49,30 @@ public class NLPClientHelper {
 	 * @return the JSON response of the request.
 	 */
 	public static String makeRestRequest(String query, boolean useControlTower) {
-		IPreferencesService preferencesService = Platform.getPreferencesService();
 		if (useControlTower) {
-			String CTAddress = preferencesService != null ? preferencesService.getString("eu.scasefp7.eclipse.core.ui",
-					"controlTowerServiceURI", "http://app.scasefp7.com:3000/", null) : "http://app.scasefp7.com:3000/";
-			String NLPServerAddress = CTAddress + "api/proxy/nlpserver/project";
-			String SCASEToken = preferencesService != null ? preferencesService.getString(
-					"eu.scasefp7.eclipse.core.ui", "controlTowerServiceToken", "", null) : "";
-			String SCASESecret = preferencesService != null ? preferencesService.getString(
-					"eu.scasefp7.eclipse.core.ui", "controlTowerServiceSecret", "", null) : "";
 			try {
+				ISecurePreferences securePreferencesService = SecurePreferencesFactory.getDefault()
+						.node("eu.scasefp7.eclipse.core.ui");
+				String CTAddress = securePreferencesService != null
+						? securePreferencesService.get("controlTowerServiceURI", "http://app.scasefp7.com:3000/")
+						: "http://app.scasefp7.com:3000/";
+				String NLPServerAddress = CTAddress + "api/proxy/nlpserver/project";
+				String SCASEToken = securePreferencesService != null
+						? securePreferencesService.get("controlTowerServiceToken", "") : "";
+				String SCASESecret = securePreferencesService != null
+						? securePreferencesService.get("controlTowerServiceSecret", "") : "";
 				return makeRestRequest(NLPServerAddress, SCASEToken, SCASESecret, query);
 			} catch (WrongCredentialsException e) {
-				showErrorMessage(preferencesService != null);
+				showErrorMessage(Platform.getPreferencesService() != null);
+				return null;
+			} catch (StorageException e) {
+				Activator.log("There is a problem with the secure storage", e);
 				return null;
 			}
 		} else {
-			String NLPServerRootAddress = preferencesService != null ? preferencesService.getString(
-					"eu.scasefp7.eclipse.core.ui", "nlpServiceURI", "http://nlp.scasefp7.eu:8010/", null)
+			IPreferencesService preferencesService = Platform.getPreferencesService();
+			String NLPServerRootAddress = preferencesService != null ? preferencesService
+					.getString("eu.scasefp7.eclipse.core.ui", "nlpServiceURI", "http://nlp.scasefp7.eu:8010/", null)
 					: "http://nlp.scasefp7.eu:8010/";
 			String NLPServerAddress = NLPServerRootAddress + "nlpserver/project";
 			return makeRestRequest(NLPServerAddress, query);

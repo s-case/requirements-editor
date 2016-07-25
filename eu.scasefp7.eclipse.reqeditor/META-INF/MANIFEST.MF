@@ -26,3 +26,4 @@ Export-Package: eu.scasefp7.eclipse.reqeditor,
  eu.scasefp7.eclipse.reqeditor.ui.annotationseditor,
  eu.scasefp7.eclipse.reqeditor.ui.requirementseditor,
  eu.scasefp7.eclipse.reqeditor.wizards
+Import-Package: org.eclipse.equinox.security.storage
