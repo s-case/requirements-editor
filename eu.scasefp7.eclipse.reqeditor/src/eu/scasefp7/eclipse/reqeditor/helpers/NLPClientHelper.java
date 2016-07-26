@@ -42,6 +42,54 @@ public class NLPClientHelper {
 	}
 
 	/**
+	 * Retrieves a parameter from the secure preferences store.
+	 * 
+	 * @param parameterName the name of the parameter.
+	 * @param parameterDefaultValue the default value if the parameter is not found or if it does not have a value.
+	 * @return the value of the parameter given.
+	 * @throws StorageException if there is a problem with the way the parameter is stored.
+	 */
+	private static String getParameterFromSecureStore(String parameterName, String parameterDefaultValue)
+			throws StorageException {
+		ISecurePreferences securePreferencesService = SecurePreferencesFactory.getDefault()
+				.node("eu.scasefp7.eclipse.core.ui");
+		return securePreferencesService != null ? securePreferencesService.get(parameterName, parameterDefaultValue)
+				: parameterDefaultValue;
+	}
+
+	/**
+	 * Retrieves a parameter from the preferences store.
+	 * 
+	 * @param parameterName the name of the parameter.
+	 * @param parameterDefaultValue the default value if the parameter is not found or if it does not have a value.
+	 * @return the value of the parameter given.
+	 */
+	private static String getParameterFromPreferenceStore(String parameterName, String parameterDefaultValue) {
+		IPreferencesService preferencesService = Platform.getPreferencesService();
+		return preferencesService != null ? preferencesService.getString("eu.scasefp7.eclipse.core.ui", parameterName,
+				parameterDefaultValue, null) : parameterDefaultValue;
+	}
+
+	/**
+	 * Revceives the S-CASE token and secret and creates the authorization header.
+	 * 
+	 * @param SCASEToken the S-CASE token.
+	 * @param SCASESecret the S-CASE secret.
+	 * @return an authorization header as a string.
+	 * @throws WrongCredentialsException if the credentials are not correct.
+	 */
+	private static String getSignedCredentials(String SCASEToken, String SCASESecret) throws WrongCredentialsException {
+		JWTSigner signer = new JWTSigner(SCASESecret);
+		HashMap<String, Object> claims = new HashMap<String, Object>();
+		claims.put("token", SCASEToken);
+		if (claims.get("token") == "") {
+			throw new WrongCredentialsException();
+		}
+		String signature = signer.sign(claims);
+		return "CT-AUTH " + SCASEToken + ":" + signature;
+	}
+
+	/**
 	 * Makes a REST request with JSON body to the NLP server and returns the response in JSON format.
 	 * 
 	 * @param query the JSON query to be sent.
@@ -51,16 +99,11 @@ public class NLPClientHelper {
 	public static String makeRestRequest(String query, boolean useControlTower) {
 		if (useControlTower) {
 			try {
-				ISecurePreferences securePreferencesService = SecurePreferencesFactory.getDefault()
-						.node("eu.scasefp7.eclipse.core.ui");
-				String CTAddress = securePreferencesService != null
-						? securePreferencesService.get("controlTowerServiceURI", "http://app.scasefp7.com:3000/")
-						: "http://app.scasefp7.com:3000/";
+				String CTAddress = getParameterFromSecureStore("controlTowerServiceURI",
+						"http://app.scasefp7.com:3000/");
 				String NLPServerAddress = CTAddress + "api/proxy/nlpserver/project";
-				String SCASEToken = securePreferencesService != null
-						? securePreferencesService.get("controlTowerServiceToken", "") : "";
-				String SCASESecret = securePreferencesService != null
-						? securePreferencesService.get("controlTowerServiceSecret", "") : "";
+				String SCASEToken = getParameterFromSecureStore("controlTowerServiceToken", "");
+				String SCASESecret = getParameterFromSecureStore("controlTowerServiceSecret", "");
 				return makeRestRequest(NLPServerAddress, SCASEToken, SCASESecret, query);
 			} catch (WrongCredentialsException e) {
 				showErrorMessage(Platform.getPreferencesService() != null);
@@ -70,10 +113,8 @@ public class NLPClientHelper {
 				return null;
 			}
 		} else {
-			IPreferencesService preferencesService = Platform.getPreferencesService();
-			String NLPServerRootAddress = preferencesService != null ? preferencesService
-					.getString("eu.scasefp7.eclipse.core.ui", "nlpServiceURI", "http://nlp.scasefp7.eu:8010/", null)
-					: "http://nlp.scasefp7.eu:8010/";
+			String NLPServerRootAddress = getParameterFromPreferenceStore("nlpServiceURI",
+					"http://nlp.scasefp7.eu:8010/");
 			String NLPServerAddress = NLPServerRootAddress + "nlpserver/project";
 			return makeRestRequest(NLPServerAddress, query);
 		}
@@ -158,14 +199,8 @@ public class NLPClientHelper {
 			urlc.setRequestProperty("Content-Type", "application/json");
 
 			// Add authorization parameters
-			JWTSigner signer = new JWTSigner(SCASESecret);
-			HashMap<String, Object> claims = new HashMap<String, Object>();
-			claims.put("token", SCASEToken);
-			if (claims.get("token") == "") {
-				throw new WrongCredentialsException();
-			}
-			String signature = signer.sign(claims);
-			urlc.setRequestProperty("AUTHORIZATION", "CT-AUTH " + SCASEToken + ":" + signature);
+			String credentials = getSignedCredentials(SCASEToken, SCASESecret);
+			urlc.setRequestProperty("AUTHORIZATION", credentials);
 
 			urlc.setDoOutput(true);
 			urlc.setAllowUserInteraction(false);
