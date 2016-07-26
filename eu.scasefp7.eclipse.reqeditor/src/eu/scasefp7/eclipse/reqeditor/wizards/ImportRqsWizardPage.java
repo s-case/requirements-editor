@@ -38,6 +38,7 @@ import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImportPage1;
 import org.eclipse.ui.part.FileEditorInput;
 
+import eu.scasefp7.eclipse.core.builder.ProjectUtils;
 import eu.scasefp7.eclipse.reqeditor.Activator;
 import eu.scasefp7.eclipse.reqeditor.helpers.ProjectLocator;
 
@@ -61,19 +62,7 @@ public class ImportRqsWizardPage extends WizardFileSystemResourceImportPage1 {
 		setDescription("Select your requirements file to import");
 		if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
 			IProject project = ProjectLocator.getProjectOfSelectionList((IStructuredSelection) selection);
-			String requirementsFolderLocation = null;
-			try {
-				requirementsFolderLocation = project.getPersistentProperty(new QualifiedName("",
-						"eu.scasefp7.eclipse.core.ui.rqsFolder"));
-			} catch (CoreException e) {
-				Activator.log("Error retrieving project property (requirements folder location)", e);
-			}
-			IContainer container = project;
-			if (requirementsFolderLocation != null) {
-			    IResource requirementsFolder = project.findMember(new Path(requirementsFolderLocation)); 
-				if (requirementsFolder != null && requirementsFolder.exists())
-					container = (IContainer) requirementsFolder;
-			}
+			IContainer container = ProjectUtils.getProjectRequirementsFolder(project);
 			setContainerFieldValue(container.getFullPath().toString());
 		}
 	}
