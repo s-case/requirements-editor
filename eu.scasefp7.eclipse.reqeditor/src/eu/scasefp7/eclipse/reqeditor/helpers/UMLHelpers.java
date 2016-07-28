@@ -93,13 +93,20 @@ public class UMLHelpers {
 			Element doc = dom.getDocumentElement();
 			doc.normalize();
 
-			Node root = doc.getFirstChild().getNextSibling();
+			Node root;
+			Node secondChild = doc.getFirstChild().getNextSibling();
+			if (secondChild.getNodeName().equals("packagedElement")
+					&& secondChild.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:Activity")) {
+				root = secondChild;
+			} else
+				root = doc;
 			NodeList nodes = root.getChildNodes();
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
-				if (node.getNodeName().equals("node")
-						&& (node.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:OpaqueAction") || node
-								.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:UseCaseNode"))) {
+				if ((node.getNodeName().equals("packagedElement") && node.getAttributes().getNamedItem("xmi:type")
+						.getTextContent().equals("uml:UseCase"))
+						|| (node.getNodeName().equals("node") && node.getAttributes().getNamedItem("xmi:type")
+								.getTextContent().equals("uml:OpaqueAction"))) {
 					requirements.add(node.getAttributes().getNamedItem("name").getTextContent());
 				}
 			}

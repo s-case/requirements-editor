@@ -67,14 +67,21 @@ public class UMLPhrasesReader extends RequirementsReader {
 			doc = dom.getDocumentElement();
 			doc.normalize();
 
-			Node root = doc.getFirstChild().getNextSibling();
+			Node root;
+			Node secondChild = doc.getFirstChild().getNextSibling();
+			if (secondChild.getNodeName().equals("packagedElement")
+					&& secondChild.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:Activity")) {
+				root = secondChild;
+			} else
+				root = doc;
 			NodeList nodes = root.getChildNodes();
 			int k = 0;
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
-				if (node.getNodeName().equals("node")
-						&& (node.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:OpaqueAction") || node
-								.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:UseCaseNode"))) {
+				if ((node.getNodeName().equals("packagedElement") && node.getAttributes().getNamedItem("xmi:type")
+						.getTextContent().equals("uml:UseCase"))
+						|| (node.getNodeName().equals("node") && node.getAttributes().getNamedItem("xmi:type")
+								.getTextContent().equals("uml:OpaqueAction"))) {
 					k++;
 					requirements.add(new Requirement(k, node.getAttributes().getNamedItem("name").getTextContent()));
 					if (node.getAttributes().getNamedItem("annotations") != null
@@ -98,14 +105,21 @@ public class UMLPhrasesReader extends RequirementsReader {
 	 * requirement or an annotation is modified.
 	 */
 	public void refresh() {
-		Node root = doc.getFirstChild().getNextSibling();
+		Node root;
+		Node secondChild = doc.getFirstChild().getNextSibling();
+		if (secondChild.getNodeName().equals("packagedElement")
+				&& secondChild.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:Activity")) {
+			root = secondChild;
+		} else
+			root = doc;
 		NodeList nodes = root.getChildNodes();
 		int k = 0;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-			if (node.getNodeName().equals("node")
-					&& (node.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:OpaqueAction") || node
-							.getAttributes().getNamedItem("xmi:type").getTextContent().equals("uml:UseCaseNode"))) {
+			if ((node.getNodeName().equals("packagedElement") && node.getAttributes().getNamedItem("xmi:type")
+					.getTextContent().equals("uml:UseCase"))
+					|| (node.getNodeName().equals("node") && node.getAttributes().getNamedItem("xmi:type")
+							.getTextContent().equals("uml:OpaqueAction"))) {
 				k++;
 				String annotationsText = "";
 				for (TAnnotation tannotation : getTAnnotationsByRequirementId(k)) {
