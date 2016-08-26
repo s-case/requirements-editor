@@ -316,7 +316,8 @@
                appearsBefore="eu.scasefp7.eclipse.core.ui.dashboard.groups.mashup"
                name="Design" />
          <command
-              buttonId="eu.scasefp7.eclipse.reqeditor.dashboard.buttons.createrqs"
+              appearsBefore="eu.scasefp7.eclipse.core.ui.dashboard.buttons.design.createstoryboards"
+              buttonId="eu.scasefp7.eclipse.core.ui.dashboard.buttons.design.createrqs"
               commandId="org.eclipse.ui.newWizard"
               groupId="eu.scasefp7.eclipse.core.ui.dashboard.groups.design"
               label="Create requirements"
