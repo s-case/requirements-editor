@@ -99,8 +99,7 @@ public class NLPClientHelper {
 	public static String makeRestRequest(String query, boolean useControlTower) {
 		if (useControlTower) {
 			try {
-				String CTAddress = getParameterFromSecureStore("controlTowerServiceURI",
-						"http://app.scasefp7.com:3000/");
+				String CTAddress = getParameterFromSecureStore("controlTowerServiceURI", "https://app.scasefp7.com/");
 				String NLPServerAddress = CTAddress + "api/proxy/nlpserver/project";
 				String SCASEToken = getParameterFromSecureStore("controlTowerServiceToken", "");
 				String SCASESecret = getParameterFromSecureStore("controlTowerServiceSecret", "");
