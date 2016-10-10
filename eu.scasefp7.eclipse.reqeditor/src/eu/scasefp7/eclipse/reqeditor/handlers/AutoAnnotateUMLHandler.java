@@ -98,23 +98,25 @@ public class AutoAnnotateUMLHandler extends AutoAnnotateSBDHandler {
 										root = doc;
 									NodeList nodes = root.getChildNodes();
 									int k = 0;
-									for (int i = 0; i < nodes.getLength(); i++) {
-										Node node = nodes.item(i);
-										if ((node.getNodeName().equals("packagedElement") && node.getAttributes()
-												.getNamedItem("xmi:type").getTextContent().equals("uml:UseCase"))
-												|| (node.getNodeName().equals("node") && node.getAttributes()
-														.getNamedItem("xmi:type").getTextContent()
-														.equals("uml:OpaqueAction"))) {
-											String annotationsText = annotations.get(k);
-											k++;
-											if (!annotationsText.equals("")) {
-												annotationsText = annotationsText.substring(0,
-														annotationsText.length() - 2);
-												if (node.getAttributes().getNamedItem("annotations") == null)
-													node.getAttributes().setNamedItem(
-															node.getOwnerDocument().createAttribute("annotations"));
-												node.getAttributes().getNamedItem("annotations")
-														.setTextContent(annotationsText);
+									if (annotations.size() > 0){
+										for (int i = 0; i < nodes.getLength(); i++) {
+											Node node = nodes.item(i);
+											if ((node.getNodeName().equals("packagedElement") && node.getAttributes()
+													.getNamedItem("xmi:type").getTextContent().equals("uml:UseCase"))
+													|| (node.getNodeName().equals("node") && node.getAttributes()
+															.getNamedItem("xmi:type").getTextContent()
+															.equals("uml:OpaqueAction"))) {
+												String annotationsText = annotations.get(k);
+												k++;
+												if (!annotationsText.equals("")) {
+													annotationsText = annotationsText.substring(0,
+															annotationsText.length() - 2);
+													if (node.getAttributes().getNamedItem("annotations") == null)
+														node.getAttributes().setNamedItem(
+																node.getOwnerDocument().createAttribute("annotations"));
+													node.getAttributes().getNamedItem("annotations")
+															.setTextContent(annotationsText);
+												}
 											}
 										}
 									}

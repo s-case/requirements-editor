@@ -82,16 +82,16 @@ public class UMLPhrasesReader extends RequirementsReader {
 						.getTextContent().equals("uml:UseCase"))
 						|| (node.getNodeName().equals("node") && node.getAttributes().getNamedItem("xmi:type")
 								.getTextContent().equals("uml:OpaqueAction"))) {
-					k++;
-					requirements.add(new Requirement(k, node.getAttributes().getNamedItem("name").getTextContent()));
-					if (node.getAttributes().getNamedItem("annotations") != null
-							&& !node.getAttributes().getNamedItem("annotations").getNodeValue().equals("")) {
-						String[] lineAnnotations = node.getAttributes().getNamedItem("annotations").getTextContent()
-								.split("\\\\n");
-						for (String line : lineAnnotations) {
-							parseAnnotation(line, true);
+					if (node.getAttributes().getNamedItem("name") != null) {
+						k++;
+						requirements.add(new Requirement(k, node.getAttributes().getNamedItem("name").getTextContent()));
+						if (node.getAttributes().getNamedItem("annotations") != null
+								&& !node.getAttributes().getNamedItem("annotations").getNodeValue().equals("")) {
+							String[] lineAnnotations = node.getAttributes().getNamedItem("annotations").getTextContent().split("\\\\n");
+							for (String line : lineAnnotations) {
+								parseAnnotation(line, true);
+							}
 						}
-
 					}
 				}
 			}

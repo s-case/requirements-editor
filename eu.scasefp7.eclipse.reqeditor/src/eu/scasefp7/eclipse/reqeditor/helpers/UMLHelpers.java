@@ -107,7 +107,9 @@ public class UMLHelpers {
 						.getTextContent().equals("uml:UseCase"))
 						|| (node.getNodeName().equals("node") && node.getAttributes().getNamedItem("xmi:type")
 								.getTextContent().equals("uml:OpaqueAction"))) {
-					requirements.add(node.getAttributes().getNamedItem("name").getTextContent());
+					if (node.getAttributes().getNamedItem("name") != null) {
+						requirements.add(node.getAttributes().getNamedItem("name").getTextContent());
+					}
 				}
 			}
 		} catch (ParserConfigurationException | SAXException | IOException e) {

@@ -153,7 +153,8 @@ public class AutoAnnotateSBDHandler extends AutoAnnotateHandler {
 			projectRequirements += "{\"id\":\"" + "FR" + (j - 1) + "\",\"text\":\"" + requirement.toLowerCase()
 					+ "\"},";
 		}
-		projectRequirements = projectRequirements.substring(0, projectRequirements.length() - 1);
+		if (projectRequirements.length() > 0)
+			projectRequirements = projectRequirements.substring(0, projectRequirements.length() - 1);
 		int totalRequirements = j - 1;
 		String query = "{\"project_name\":\"any\",\"annotation_format\":\"ann\",\"project_requirements\":["
 				+ projectRequirements + "]}";
