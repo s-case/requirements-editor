@@ -8,8 +8,7 @@
       image="s-case-feature.png">
 
    <description url="https://github.com/s-case/requirements-editor">
-      This is the Requirements Editor plugin, a tool for the EU-funded
-project S-CASE
+Requirements editor creates and annotates functional requirements for the generated web service.
    </description>
 
    <copyright url="http://www.scasefp7.eu/copyright">
