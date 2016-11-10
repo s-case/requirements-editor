@@ -11,7 +11,7 @@
 Requirements editor creates and annotates functional requirements for the generated web service.
    </description>
 
-   <copyright url="http://www.scasefp7.eu/copyright">
+   <copyright url="http://s-case.github.io/copyright.html">
       Copyright 2015 S-CASE Consortium
    
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -27,7 +27,7 @@ Requirements editor creates and annotates functional requirements for the genera
      limitations under the License.
    </copyright>
 
-   <license url="http://www.scasefp7.eu/licenses/">
+   <license url="http://s-case.github.io/licenses.html">
       Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
