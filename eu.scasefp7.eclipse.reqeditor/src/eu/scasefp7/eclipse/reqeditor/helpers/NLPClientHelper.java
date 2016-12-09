@@ -113,7 +113,7 @@ public class NLPClientHelper {
 			}
 		} else {
 			String NLPServerRootAddress = getParameterFromPreferenceStore("nlpServiceURI",
-					"http://nlp.scasefp7.eu:8010/");
+					"http://nlp.scasefp7.eu:8080/");
 			String NLPServerAddress = NLPServerRootAddress + "nlpserver/project";
 			return makeRestRequest(NLPServerAddress, query);
 		}
